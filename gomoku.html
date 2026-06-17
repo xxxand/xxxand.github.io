@@ -549,15 +549,17 @@ function aiMove() {
     });
     scored.sort((a, b) => b.score - a.score);
     const top = scored.slice(0, 12);
-    let bestScore = -Infinity, bestMove = top[0];
+    let bestScore = -Infinity, bestMoves = [];
     for (const {r, c} of top) {
       board[r][c] = 2;
       if (forbiddenEnabled && isForbidden(r, c)) { board[r][c] = 0; continue; }
-      const score = alphaBeta(3, -Infinity, Infinity, 1);
+      const score = alphaBeta(3, -Infinity, Infinity, 1) + (Math.random() - 0.5) * 2;
       board[r][c] = 0;
-      if (score > bestScore) { bestScore = score; bestMove = {r, c}; }
+      if (score > bestScore) { bestScore = score; bestMoves = [{r, c}]; }
+      else if (Math.abs(score - bestScore) < 0.01) { bestMoves.push({r, c}); }
     }
     winLine = null;
+    let bestMove = bestMoves[Math.floor(Math.random() * bestMoves.length)];
     applyAIMove(bestMove.r, bestMove.c);
   }, 50);
 }
