@@ -58,6 +58,7 @@ h1 {
   aspect-ratio: 1;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 .cell {
   background: #5d6d7e;
@@ -70,6 +71,8 @@ h1 {
   cursor: pointer;
   transition: background 0.1s;
   aspect-ratio: 1;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
 }
 .cell:hover { background: #6e7f91; }
 .cell.revealed {
@@ -381,6 +384,7 @@ function stopTimer() {
 
 let longPressTimer;
 boardEl.addEventListener('touchstart', (e) => {
+  e.preventDefault();
   const cell = e.target.closest('.cell');
   if (!cell) return;
   const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
