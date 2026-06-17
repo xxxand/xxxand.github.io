@@ -654,9 +654,9 @@ function undoMove() {
     lastMoveR = -1; lastMoveC = -1;
   }
   currentPlayer = aiEnabled ? humanPlayer : (moveHistory.length > 0 ? (moveHistory[moveHistory.length - 1].player === 1 ? 2 : 1) : 1);
-  const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
+  const aiText = aiEnabled ? ' (人机对战)' : '';
   const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
-  statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + colorText;
+  statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + aiText;
   drawBoard();
 }
 
@@ -674,9 +674,9 @@ function newGame() {
   humanPlayer = btnColor.textContent === '执黑' ? 1 : 2;
   aiPlayer = humanPlayer === 1 ? 2 : 1;
   btnColor.textContent = humanPlayer === 1 ? '执黑' : '执白';
-  const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
+  const aiText = aiEnabled ? ' (人机对战)' : '';
   const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
-  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + fbText + colorText;
+  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + fbText + aiText;
   drawBoard();
   if (aiEnabled && aiPlayer === 1) aiMove();
 }
@@ -700,9 +700,9 @@ btnForbidden.addEventListener('click', () => {
   forbiddenEnabled = btnForbidden.classList.contains('on');
   btnForbidden.textContent = forbiddenEnabled ? '禁手：开' : '禁手：关';
   if (!gameOver) {
-    const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
+    const aiText = aiEnabled ? ' (人机对战)' : '';
     const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
-    statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + colorText;
+    statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + aiText;
   }
 });
 
