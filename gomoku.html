@@ -130,6 +130,18 @@ canvas {
 }
 .btn-ai:hover { border-color: #3498db; color: #3498db; }
 .btn-ai.on:hover { opacity: 0.9; color: #fff; }
+.btn-color {
+  background: rgba(255,255,255,0.08);
+  color: #999;
+  border: 1px solid #555;
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-color:hover { border-color: #9b59b6; color: #9b59b6; }
 .btn-undo {
   background: rgba(255,255,255,0.08);
   color: #ccc;
@@ -179,6 +191,7 @@ canvas {
   <div class="options">
     <button class="btn btn-forbidden" id="btnForbidden">禁手：关</button>
     <button class="btn btn-ai" id="btnAI">双人对战</button>
+    <button class="btn btn-color" id="btnColor">执黑</button>
   </div>
   <div class="controls">
     <button class="btn btn-new" id="btnRestart">重新开始</button>
@@ -205,6 +218,7 @@ const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');
 const btnForbidden = document.getElementById('btnForbidden');
 const btnAI = document.getElementById('btnAI');
+const btnColor = document.getElementById('btnColor');
 const displaySize = 630;
 const boardSize = 15;
 
@@ -224,6 +238,7 @@ let winLine = null;
 let lastMoveR = -1, lastMoveC = -1;
 let forbiddenEnabled = false;
 let aiEnabled = false;
+let humanPlayer = 1, aiPlayer = 2;
 let aiThinking = false;
 let moveHistory = [];
 
@@ -396,15 +411,13 @@ function checkWin(r, c, player) {
   return false;
 }
 
-function evaluateBoard() {
+function evaluateBoard(aiPlayer) {
   let score = 0;
-  let done = new Set();
   for (let r = 0; r < boardSize; r++) {
     for (let c = 0; c < boardSize; c++) {
       if (board[r][c] === 0) continue;
       const player = board[r][c];
       for (const [dr, dc] of directions) {
-        const key = r * boardSize * 4 + c * 4 + directions.findIndex(d => d[0]===dr && d[1]===dc);
         const pr = r - dr, pc = c - dc;
         if (pr >= 0 && pr < boardSize && pc >= 0 && pc < boardSize && board[pr][pc] === player) continue;
         let count = 0;
@@ -440,7 +453,7 @@ function evaluateBoard() {
         else if (count === 3) s = openEnds === 2 ? 8000 : (openEnds === 1 ? 500 : 0);
         else if (count === 2) s = openEnds === 2 ? 500 : (openEnds === 1 ? 50 : 0);
         else if (count === 1) s = openEnds === 2 ? 10 : (openEnds === 1 ? 3 : 0);
-        if (player === 2) score += s; else score -= s;
+        if (player === aiPlayer) score += s; else score -= s;
       }
     }
   }
@@ -472,25 +485,26 @@ function getCandidates() {
   return candidates;
 }
 
-function alphaBeta(depth, alpha, beta, player) {
-  if (depth === 0) return evaluateBoard();
+function alphaBeta(depth, alpha, beta, player, aiPlayer) {
+  if (depth === 0) return evaluateBoard(aiPlayer);
   let candidates = getCandidates();
   if (candidates.length > 20) {
     candidates = candidates.map(m => {
       board[m.r][m.c] = player;
-      const s = evaluateBoard();
+      const s = evaluateBoard(aiPlayer);
       board[m.r][m.c] = 0;
       return {r: m.r, c: m.c, score: s};
     });
-    candidates.sort((a,b) => player === 2 ? b.score - a.score : a.score - b.score);
+    candidates.sort((a,b) => player === aiPlayer ? b.score - a.score : a.score - b.score);
     candidates = candidates.slice(0, 20).map(m => ({r: m.r, c: m.c}));
   }
-  if (player === 2) {
+  if (player === aiPlayer) {
     let maxEval = -Infinity;
     for (const {r, c} of candidates) {
-      board[r][c] = 2;
-      if (checkWin(r, c, 2)) { board[r][c] = 0; winLine = null; return 1000000 + depth; }
-      const eval = alphaBeta(depth - 1, alpha, beta, 1);
+      board[r][c] = player;
+      if (player === 1 && forbiddenEnabled && isForbidden(r, c)) { board[r][c] = 0; continue; }
+      if (checkWin(r, c, player)) { board[r][c] = 0; winLine = null; return 1000000 + depth; }
+      const eval = alphaBeta(depth - 1, alpha, beta, player === 1 ? 2 : 1, aiPlayer);
       board[r][c] = 0;
       maxEval = Math.max(maxEval, eval);
       alpha = Math.max(alpha, eval);
@@ -500,14 +514,10 @@ function alphaBeta(depth, alpha, beta, player) {
   } else {
     let minEval = Infinity;
     for (const {r, c} of candidates) {
-      board[r][c] = 1;
-      if (checkWin(r, c, 1)) { board[r][c] = 0; winLine = null; return -1000000 - depth; }
-      let skip = false;
-      if (forbiddenEnabled) {
-        if (isForbidden(r, c)) { board[r][c] = 0; continue; }
-      }
-      board[r][c] = 1;
-      const eval = alphaBeta(depth - 1, alpha, beta, 2);
+      board[r][c] = player;
+      if (player === 1 && forbiddenEnabled && isForbidden(r, c)) { board[r][c] = 0; continue; }
+      if (checkWin(r, c, player)) { board[r][c] = 0; winLine = null; return -1000000 - depth; }
+      const eval = alphaBeta(depth - 1, alpha, beta, player === 1 ? 2 : 1, aiPlayer);
       board[r][c] = 0;
       minEval = Math.min(minEval, eval);
       beta = Math.min(beta, eval);
@@ -519,25 +529,28 @@ function alphaBeta(depth, alpha, beta, player) {
 
 function aiMove() {
   aiThinking = true;
-  statusEl.innerHTML = '白棋 <span class="player white"></span> AI思考中...';
+  const colorName = aiPlayer === 1 ? '黑棋' : '白棋';
+  const colorClass = aiPlayer === 1 ? 'black' : 'white';
+  statusEl.innerHTML = `${colorName} <span class="player ${colorClass}"></span> AI思考中...`;
   drawBoard();
   setTimeout(() => {
+    const opp = aiPlayer === 1 ? 2 : 1;
     const candidates = getCandidates();
     for (const {r, c} of candidates) {
-      board[r][c] = 2;
-      if (checkWin(r, c, 2)) { board[r][c] = 0; applyAIMove(r, c); return; }
+      board[r][c] = aiPlayer;
+      if (checkWin(r, c, aiPlayer)) { board[r][c] = 0; applyAIMove(r, c); return; }
       board[r][c] = 0;
     }
     winLine = null;
     for (const {r, c} of candidates) {
-      board[r][c] = 1;
-      if (checkWin(r, c, 1)) { board[r][c] = 0; applyAIMove(r, c); return; }
+      board[r][c] = opp;
+      if (checkWin(r, c, opp)) { board[r][c] = 0; applyAIMove(r, c); return; }
       board[r][c] = 0;
     }
     winLine = null;
     let scored = candidates.map(m => {
-      board[m.r][m.c] = 2;
-      const s = evaluateBoard();
+      board[m.r][m.c] = aiPlayer;
+      const s = evaluateBoard(aiPlayer);
       board[m.r][m.c] = 0;
       return {r: m.r, c: m.c, score: s};
     });
@@ -545,8 +558,9 @@ function aiMove() {
     const top = scored.slice(0, 12);
     let bestScore = -Infinity, bestMoves = [];
     for (const {r, c} of top) {
-      board[r][c] = 2;
-      const score = alphaBeta(5, -Infinity, Infinity, 1) + (Math.random() - 0.5) * 2;
+      board[r][c] = aiPlayer;
+      if (aiPlayer === 1 && forbiddenEnabled && isForbidden(r, c)) { board[r][c] = 0; continue; }
+      const score = alphaBeta(5, -Infinity, Infinity, opp, aiPlayer) + (Math.random() - 0.5) * 2;
       board[r][c] = 0;
       if (score > bestScore) { bestScore = score; bestMoves = [{r, c}]; }
       else if (Math.abs(score - bestScore) < 0.01) { bestMoves.push({r, c}); }
@@ -560,13 +574,15 @@ function aiMove() {
 function applyAIMove(r, c) {
   aiThinking = false;
   winLine = null;
-  board[r][c] = 2;
-  moveHistory.push({r, c, player: 2});
+  board[r][c] = aiPlayer;
+  moveHistory.push({r, c, player: aiPlayer});
   lastMoveR = r; lastMoveC = c;
-  if (checkWin(r, c, 2)) {
+  const aiName = aiPlayer === 1 ? '黑棋' : '白棋';
+  const oppName = aiPlayer === 1 ? '白棋' : '黑棋';
+  if (checkWin(r, c, aiPlayer)) {
     gameOver = true;
     drawBoard();
-    showOverlay('白棋 获胜!', 'AI 白棋取得胜利');
+    showOverlay(`${aiName} 获胜!`, 'AI 取得胜利');
     return;
   }
   let draw = true;
@@ -574,14 +590,15 @@ function applyAIMove(r, c) {
     for (let cc = 0; cc < boardSize; cc++)
       if (board[rr][cc] === 0) { draw = false; break; }
   if (draw) { gameOver = true; drawBoard(); showOverlay('平局', '棋盘已满'); return; }
-  currentPlayer = 1;
-  statusEl.innerHTML = '黑棋 <span class="player black"></span> 落子';
+  currentPlayer = humanPlayer;
+  const oppClass = humanPlayer === 1 ? 'black' : 'white';
+  statusEl.innerHTML = `${oppName} <span class="player ${oppClass}"></span> 落子`;
   drawBoard();
 }
 
 function handleClick(e) {
   if (gameOver || aiThinking) return;
-  if (aiEnabled && currentPlayer === 2) return;
+  if (aiEnabled && currentPlayer !== humanPlayer) return;
   const rect = canvas.getBoundingClientRect();
   const scaleX = displaySize / rect.width;
   const scaleY = displaySize / rect.height;
@@ -611,7 +628,7 @@ function handleClick(e) {
       if (board[rr][cc] === 0) { draw = false; break; }
   if (draw) { gameOver = true; drawBoard(); showOverlay('平局', '棋盘已满'); return; }
   if (aiEnabled) {
-    currentPlayer = 2;
+    currentPlayer = aiPlayer;
     drawBoard();
     aiMove();
   } else {
@@ -623,7 +640,8 @@ function handleClick(e) {
 
 function undoMove() {
   if (gameOver || aiThinking || moveHistory.length === 0) return;
-  const steps = aiEnabled ? 2 : 1;
+  const lastMove = moveHistory[moveHistory.length - 1];
+  const steps = aiEnabled ? (lastMove.player === humanPlayer ? 1 : 2) : 1;
   for (let i = 0; i < steps && moveHistory.length > 0; i++) {
     const m = moveHistory.pop();
     board[m.r][m.c] = 0;
@@ -635,8 +653,10 @@ function undoMove() {
   } else {
     lastMoveR = -1; lastMoveC = -1;
   }
-  currentPlayer = moveHistory.length > 0 ? (moveHistory[moveHistory.length - 1].player === 1 ? 2 : 1) : 1;
-  statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}`;
+  currentPlayer = aiEnabled ? humanPlayer : (moveHistory.length > 0 ? (moveHistory[moveHistory.length - 1].player === 1 ? 2 : 1) : 1);
+  const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
+  const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
+  statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + colorText;
   drawBoard();
 }
 
@@ -651,10 +671,14 @@ function newGame() {
   document.getElementById('overlay').classList.add('hidden');
   forbiddenEnabled = btnForbidden.classList.contains('on');
   aiEnabled = btnAI.classList.contains('on');
-  const aiText = aiEnabled ? ' (人机对战)' : '';
+  humanPlayer = btnColor.textContent === '执黑' ? 1 : 2;
+  aiPlayer = humanPlayer === 1 ? 2 : 1;
+  btnColor.textContent = humanPlayer === 1 ? '执黑' : '执白';
+  const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
   const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
-  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + fbText + aiText;
+  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + fbText + colorText;
   drawBoard();
+  if (aiEnabled && aiPlayer === 1) aiMove();
 }
 
 function showOverlay(title, msg) {
@@ -676,9 +700,9 @@ btnForbidden.addEventListener('click', () => {
   forbiddenEnabled = btnForbidden.classList.contains('on');
   btnForbidden.textContent = forbiddenEnabled ? '禁手：开' : '禁手：关';
   if (!gameOver) {
-    const aiText = aiEnabled ? ' (人机对战)' : '';
+    const colorText = aiEnabled ? (humanPlayer === 1 ? ' (人机·执黑)' : ' (人机·执白)') : '';
     const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
-    statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + aiText;
+    statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + colorText;
   }
 });
 
@@ -686,6 +710,13 @@ btnAI.addEventListener('click', () => {
   btnAI.classList.toggle('on');
   aiEnabled = btnAI.classList.contains('on');
   btnAI.textContent = aiEnabled ? '人机对战' : '双人对战';
+  newGame();
+});
+
+btnColor.addEventListener('click', () => {
+  humanPlayer = humanPlayer === 1 ? 2 : 1;
+  aiPlayer = humanPlayer === 1 ? 2 : 1;
+  btnColor.textContent = humanPlayer === 1 ? '执黑' : '执白';
   newGame();
 });
 
