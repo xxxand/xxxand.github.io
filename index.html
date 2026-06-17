@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>xxxand's Game Hub</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+}
+
+.title {
+  font-size: 3rem;
+  color: #fff;
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #aaa;
+  margin-bottom: 50px;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.game-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.game-card:hover::before {
+  left: 100%;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.game-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.game-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.game-desc {
+  font-size: 0.95rem;
+  color: #999;
+  line-height: 1.5;
+}
+
+.game-card.snake:hover {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.game-card.g2048:hover {
+  background: rgba(255, 152, 0, 0.15);
+  border-color: rgba(255, 152, 0, 0.5);
+}
+
+.game-card.gomoku:hover {
+  background: rgba(100, 149, 237, 0.15);
+  border-color: rgba(100, 149, 237, 0.5);
+}
+
+footer {
+  margin-top: 60px;
+  color: #555;
+  font-size: 0.85rem;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1 class="title">Game Hub</h1>
+  <p class="subtitle">Choose a game to play</p>
+
+  <div class="games">
+    <a href="snake.html" class="game-card snake">
+      <span class="game-icon">🐍</span>
+      <div class="game-name">贪吃蛇</div>
+      <div class="game-desc">经典贪吃蛇游戏<br>方向键控制，吃食物变长</div>
+    </a>
+
+    <a href="2048.html" class="game-card g2048">
+      <span class="game-icon">🔢</span>
+      <div class="game-name">2048</div>
+      <div class="game-desc">数字合并益智游戏<br>方向键滑动，凑出2048</div>
+    </a>
+
+    <a href="gomoku.html" class="game-card gomoku">
+      <span class="game-icon">⚫⚪</span>
+      <div class="game-name">五子棋</div>
+      <div class="game-desc">双人对战五子棋<br>点击落子，先连五子者胜</div>
+    </a>
+  </div>
+
+  <footer>xxxand.github.io</footer>
+</div>
+</body>
+</html>
