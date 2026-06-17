@@ -20,13 +20,13 @@ body {
 }
 h1 {
   color: #e0c080;
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 3rem;
+  margin-bottom: 15px;
 }
 .status {
   color: #fff;
-  font-size: 1.3rem;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
   min-height: 1.8em;
 }
 .status .player {
@@ -75,8 +75,8 @@ canvas {
   background: rgba(255,255,255,0.1);
   color: #ccc;
   text-decoration: none;
-  display: inline-block;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 .btn-back:hover { background: rgba(255,255,255,0.2); }
 .info {
@@ -92,7 +92,7 @@ canvas {
   <div class="status" id="status">
     黑棋 <span class="player black"></span> 先行
   </div>
-  <canvas id="canvas" width="480" height="480"></canvas>
+  <canvas id="canvas" width="630" height="630"></canvas>
   <div class="controls">
     <button class="btn btn-new" id="btnRestart">重新开始</button>
     <a href="index.html" class="btn btn-back">返回首页</a>
@@ -144,7 +144,7 @@ function drawBoard() {
     const y = margin + r * cellSize;
     ctx.fillStyle = '#5a3e2b';
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
     ctx.fill();
   });
 
