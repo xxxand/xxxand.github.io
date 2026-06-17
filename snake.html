@@ -165,6 +165,16 @@ canvas {
   font-size: 1.2rem;
   margin-bottom: 20px;
 }
+.game-over-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.btn-cancel {
+  background: rgba(255,255,255,0.15);
+  color: #ccc;
+}
+.btn-cancel:hover { background: rgba(255,255,255,0.25); }
 .hidden { display: none !important; }
 </style>
 </head>
@@ -203,7 +213,10 @@ canvas {
   <div class="game-over-box">
     <h2>游戏结束</h2>
     <p>得分: <span id="finalScore">0</span></p>
-    <button class="btn btn-start" id="btnRestart">再来一局</button>
+    <div class="game-over-btns">
+      <button class="btn btn-start" id="btnRestart">再来一局</button>
+      <button class="btn btn-cancel" id="btnDismiss">取消</button>
+    </div>
   </div>
 </div>
 
@@ -348,6 +361,7 @@ function changeDirection(e) {
 document.addEventListener('keydown', changeDirection);
 document.getElementById('btnStart').addEventListener('click', startGame);
 document.getElementById('btnRestart').addEventListener('click', startGame);
+document.getElementById('btnDismiss').addEventListener('click', () => overlay.classList.add('hidden'));
 
 function setDirection(dir) {
   if (dir === 'up' && dy !== 1) { dx = 0; dy = -1; }

@@ -142,6 +142,16 @@ h1 {
 .game-over-box p { font-size: 1.2rem; margin-bottom: 20px; }
 .game-over-box .win { color: #2ecc71; }
 .game-over-box .lose { color: #e74c3c; }
+.game-over-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.btn-cancel {
+  background: rgba(255,255,255,0.1);
+  color: #ccc;
+}
+.btn-cancel:hover { background: rgba(255,255,255,0.2); }
 .hidden { display: none !important; }
 @media (max-width: 450px) {
   h1 { font-size: 2rem; }
@@ -174,7 +184,10 @@ h1 {
   <div class="game-over-box">
     <h2 id="overlayTitle"></h2>
     <p>用时: <span id="finalTime">0</span> 秒</p>
-    <button class="btn btn-new" id="btnReplay">再来一局</button>
+    <div class="game-over-btns">
+      <button class="btn btn-new" id="btnReplay">再来一局</button>
+      <button class="btn btn-cancel" id="btnDismiss">取消</button>
+    </div>
   </div>
 </div>
 
@@ -384,6 +397,7 @@ boardEl.addEventListener('touchmove', (e) => {
 
 document.getElementById('btnRestart').addEventListener('click', initBoard);
 document.getElementById('btnReplay').addEventListener('click', initBoard);
+document.getElementById('btnDismiss').addEventListener('click', () => overlay.classList.add('hidden'));
 
 initBoard();
 </script>
