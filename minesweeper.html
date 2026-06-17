@@ -382,10 +382,35 @@ function stopTimer() {
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
 }
 
-let longPressTimer;
+let touchTarget = null;
+let touchMoved = false;
+
 boardEl.addEventListener('touchstart', (e) => {
-  e.preventDefault();
   const cell = e.target.closest('.cell');
+  if (!cell) return;
+  touchTarget = cell;
+  touchMoved = false;
+  longPressTimer = setTimeout(() => {
+    const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
+    toggleFlag(r, c);
+    touchTarget = null;
+  }, 400);
+  e.preventDefault();
+}, { passive: false });
+
+boardEl.addEventListener('touchmove', () => {
+  clearTimeout(longPressTimer);
+  touchMoved = true;
+});
+
+boardEl.addEventListener('touchend', (e) => {
+  clearTimeout(longPressTimer);
+  if (touchTarget && !touchMoved) {
+    const r = parseInt(touchTarget.dataset.r), c = parseInt(touchTarget.dataset.c);
+    handleClick(r, c);
+  }
+  touchTarget = null;
+});
   if (!cell) return;
   const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
   longPressTimer = setTimeout(() => toggleFlag(r, c), 400);
