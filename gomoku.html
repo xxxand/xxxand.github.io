@@ -94,17 +94,24 @@ canvas {
   justify-content: center;
   gap: 8px;
 }
-.toggle-label {
-  color: #ccc;
+.btn-forbidden {
+  background: rgba(255,255,255,0.08);
+  color: #999;
+  border: 1px solid #555;
+  padding: 8px 24px;
+  border-radius: 8px;
   font-size: 0.95rem;
+  font-weight: bold;
   cursor: pointer;
-  user-select: none;
+  transition: all 0.2s;
 }
-.toggle-label input {
-  margin-right: 4px;
-  cursor: pointer;
-  vertical-align: middle;
+.btn-forbidden.on {
+  background: #e67e22;
+  color: #fff;
+  border-color: #e67e22;
 }
+.btn-forbidden:hover { border-color: #e67e22; color: #e67e22; }
+.btn-forbidden.on:hover { opacity: 0.9; color: #fff; }
 .info {
   color: #888;
   margin-top: 10px;
@@ -126,9 +133,7 @@ canvas {
   </div>
   <canvas id="canvas"></canvas>
   <div class="options">
-    <label class="toggle-label">
-      <input type="checkbox" id="chkForbidden"> 开启禁手规则
-    </label>
+    <button class="btn btn-forbidden" id="btnForbidden">禁手：关</button>
   </div>
   <div class="controls">
     <button class="btn btn-new" id="btnRestart">重新开始</button>
@@ -141,7 +146,7 @@ canvas {
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');
-const chkForbidden = document.getElementById('chkForbidden');
+const btnForbidden = document.getElementById('btnForbidden');
 const displaySize = 630;
 const boardSize = 15;
 
@@ -158,7 +163,7 @@ let currentPlayer = 1;
 let gameOver = false;
 let winLine = null;
 let lastMoveR = -1, lastMoveC = -1;
-let forbiddenEnabled = chkForbidden.checked;
+let forbiddenEnabled = false;
 
 function drawBoard() {
   ctx.fillStyle = '#deb887';
@@ -397,15 +402,17 @@ function newGame() {
   winLine = null;
   lastMoveR = -1;
   lastMoveC = -1;
-  forbiddenEnabled = chkForbidden.checked;
+  forbiddenEnabled = btnForbidden.classList.contains('on');
   statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + (forbiddenEnabled ? ' (禁手开启)' : '');
   drawBoard();
 }
 
 canvas.addEventListener('click', handleClick);
 document.getElementById('btnRestart').addEventListener('click', newGame);
-chkForbidden.addEventListener('change', () => {
-  forbiddenEnabled = chkForbidden.checked;
+btnForbidden.addEventListener('click', () => {
+  btnForbidden.classList.toggle('on');
+  forbiddenEnabled = btnForbidden.classList.contains('on');
+  btnForbidden.textContent = forbiddenEnabled ? '禁手：开' : '禁手：关';
   if (!gameOver) {
     statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + (forbiddenEnabled ? ' (禁手开启)' : '');
   }
