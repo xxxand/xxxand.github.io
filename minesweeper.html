@@ -59,6 +59,8 @@ h1 {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .cell {
   background: #5d6d7e;
@@ -195,6 +197,8 @@ h1 {
 </div>
 
 <script>
+document.addEventListener('selectstart', e => { if (e.target.closest('.board')) e.preventDefault(); });
+
 const ROWS = 9, COLS = 9, MINES = 10;
 let board = [];
 let revealed = [];
@@ -410,18 +414,6 @@ boardEl.addEventListener('touchend', (e) => {
     handleClick(r, c);
   }
   touchTarget = null;
-});
-  if (!cell) return;
-  const r = parseInt(cell.dataset.r), c = parseInt(cell.dataset.c);
-  longPressTimer = setTimeout(() => toggleFlag(r, c), 400);
-});
-
-boardEl.addEventListener('touchend', (e) => {
-  clearTimeout(longPressTimer);
-});
-
-boardEl.addEventListener('touchmove', (e) => {
-  clearTimeout(longPressTimer);
 });
 
 document.getElementById('btnRestart').addEventListener('click', initBoard);
