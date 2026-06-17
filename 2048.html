@@ -123,6 +123,11 @@ body {
   align-items: center;
 }
 .back-btn:hover { background: #cbbeb0; }
+.undo-btn {
+  background: #bbada0;
+  color: #f9f6f2;
+}
+.undo-btn:hover { background: #cbbeb0; }
 .controls {
   display: flex;
   gap: 10px;
@@ -180,6 +185,7 @@ body {
   </div>
   <div class="controls">
     <button class="new-game-btn" id="btnNewGame">新游戏</button>
+    <button class="new-game-btn undo-btn" id="btnUndo">悔一步</button>
     <a href="index.html" class="back-btn">返回首页</a>
   </div>
   <div class="board" id="board"></div>
@@ -207,6 +213,7 @@ let score = 0;
 let bestScore = parseInt(localStorage.getItem('best2048') || '0');
 let gameOver = false;
 let won = false;
+let history = [];
 
 bestScoreEl.textContent = bestScore;
 
@@ -253,6 +260,7 @@ function slide(row) {
 
 function move(direction) {
   const oldGrid = grid.map(r => [...r]);
+  const oldScore = score;
   if (direction === 'left') {
     for (let r = 0; r < 4; r++) grid[r] = slide(grid[r]);
   } else if (direction === 'right') {
@@ -273,6 +281,7 @@ function move(direction) {
 
   const moved = !grid.every((r, ri) => r.every((v, ci) => v === oldGrid[ri][ci]));
   if (moved) {
+    history.push({grid: oldGrid, score: oldScore});
     addRandomTile();
     renderBoard();
     if (score > bestScore) {
@@ -312,6 +321,7 @@ function newGame() {
   score = 0;
   gameOver = false;
   won = false;
+  history = [];
   overlay.classList.add('hidden');
   addRandomTile();
   addRandomTile();
@@ -348,6 +358,13 @@ boardEl.addEventListener('touchend', (e) => {
 
 document.getElementById('btnNewGame').addEventListener('click', newGame);
 document.getElementById('btnRestart').addEventListener('click', newGame);
+document.getElementById('btnUndo').addEventListener('click', () => {
+  if (gameOver || history.length === 0) return;
+  const prev = history.pop();
+  grid = prev.grid;
+  score = prev.score;
+  renderBoard();
+});
 
 newGame();
 </script>
