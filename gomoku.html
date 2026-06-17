@@ -489,7 +489,7 @@ function alphaBeta(depth, alpha, beta, player) {
     let maxEval = -Infinity;
     for (const {r, c} of candidates) {
       board[r][c] = 2;
-      if (checkWin(r, c, 2)) { board[r][c] = 0; return 1000000 + depth; }
+      if (checkWin(r, c, 2)) { board[r][c] = 0; winLine = null; return 1000000 + depth; }
       if (forbiddenEnabled && isForbidden(r, c)) {
         // AI should avoid forbidden moves (AI doesn't play forbidden anyway)
       }
@@ -504,7 +504,7 @@ function alphaBeta(depth, alpha, beta, player) {
     let minEval = Infinity;
     for (const {r, c} of candidates) {
       board[r][c] = 1;
-      if (checkWin(r, c, 1)) { board[r][c] = 0; return -1000000 - depth; }
+      if (checkWin(r, c, 1)) { board[r][c] = 0; winLine = null; return -1000000 - depth; }
       let skip = false;
       if (forbiddenEnabled) {
         let tmp = board[r][c]; board[r][c] = 1;
@@ -534,11 +534,13 @@ function aiMove() {
       if (checkWin(r, c, 2)) { board[r][c] = 0; applyAIMove(r, c); return; }
       board[r][c] = 0;
     }
+    winLine = null;
     for (const {r, c} of candidates) {
       board[r][c] = 1;
       if (checkWin(r, c, 1)) { board[r][c] = 0; applyAIMove(r, c); return; }
       board[r][c] = 0;
     }
+    winLine = null;
     let scored = candidates.map(m => {
       board[m.r][m.c] = 2;
       const s = evaluateBoard();
@@ -555,12 +557,14 @@ function aiMove() {
       board[r][c] = 0;
       if (score > bestScore) { bestScore = score; bestMove = {r, c}; }
     }
+    winLine = null;
     applyAIMove(bestMove.r, bestMove.c);
   }, 50);
 }
 
 function applyAIMove(r, c) {
   aiThinking = false;
+  winLine = null;
   board[r][c] = 2;
   moveHistory.push({r, c, player: 2});
   lastMoveR = r; lastMoveC = c;
