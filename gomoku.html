@@ -553,7 +553,7 @@ function aiMove() {
     for (const {r, c} of top) {
       board[r][c] = 2;
       if (forbiddenEnabled && isForbidden(r, c)) { board[r][c] = 0; continue; }
-      const score = alphaBeta(3, -Infinity, Infinity, 1) + (Math.random() - 0.5) * 2;
+      const score = alphaBeta(5, -Infinity, Infinity, 1) + (Math.random() - 0.5) * 2;
       board[r][c] = 0;
       if (score > bestScore) { bestScore = score; bestMoves = [{r, c}]; }
       else if (Math.abs(score - bestScore) < 0.01) { bestMoves.push({r, c}); }
