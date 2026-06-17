@@ -49,6 +49,8 @@ canvas {
   cursor: pointer;
   border-radius: 8px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  width: 630px;
+  height: 630px;
 }
 .controls {
   margin-top: 15px;
@@ -79,6 +81,24 @@ canvas {
   align-items: center;
 }
 .btn-back:hover { background: rgba(255,255,255,0.2); }
+.options {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.toggle-label {
+  color: #ccc;
+  font-size: 0.95rem;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-label input {
+  margin-right: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+}
 .info {
   color: #888;
   margin-top: 10px;
@@ -92,7 +112,12 @@ canvas {
   <div class="status" id="status">
     黑棋 <span class="player black"></span> 先行
   </div>
-  <canvas id="canvas" width="630" height="630"></canvas>
+  <canvas id="canvas"></canvas>
+  <div class="options">
+    <label class="toggle-label">
+      <input type="checkbox" id="chkForbidden"> 开启禁手规则
+    </label>
+  </div>
   <div class="controls">
     <button class="btn btn-new" id="btnRestart">重新开始</button>
     <a href="index.html" class="btn btn-back">返回首页</a>
@@ -104,25 +129,36 @@ canvas {
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');
+const chkForbidden = document.getElementById('chkForbidden');
+const displaySize = 630;
 const boardSize = 15;
-const cellSize = canvas.width / (boardSize + 1);
+
+const dpr = window.devicePixelRatio || 1;
+canvas.width = displaySize * dpr;
+canvas.height = displaySize * dpr;
+ctx.scale(dpr, dpr);
+
+const cellSize = displaySize / (boardSize + 1);
 const margin = cellSize;
 
 let board = Array(boardSize).fill(null).map(() => Array(boardSize).fill(0));
-let currentPlayer = 1; // 1 = black, 2 = white
+let currentPlayer = 1;
 let gameOver = false;
 let winLine = null;
+let lastMoveR = -1, lastMoveC = -1;
+let forbiddenEnabled = chkForbidden.checked;
 
 function drawBoard() {
-  // Wooden board background
-  const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#deb887';
+  ctx.fillRect(0, 0, displaySize, displaySize);
+
+  const bgGradient = ctx.createLinearGradient(0, 0, displaySize, displaySize);
   bgGradient.addColorStop(0, '#deb887');
   bgGradient.addColorStop(0.5, '#d2a679');
   bgGradient.addColorStop(1, '#c8956c');
   ctx.fillStyle = bgGradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, displaySize, displaySize);
 
-  // Grid lines
   ctx.strokeStyle = '#5a3e2b';
   ctx.lineWidth = 0.8;
   for (let i = 0; i < boardSize; i++) {
@@ -137,18 +173,16 @@ function drawBoard() {
     ctx.stroke();
   }
 
-  // Star points
-  const starPoints = boardSize === 15 ? [[3,3],[3,7],[3,11],[7,3],[7,7],[7,11],[11,3],[11,7],[11,11]] : [];
+  const starPoints = [[3,3],[3,7],[3,11],[7,3],[7,7],[7,11],[11,3],[11,7],[11,11]];
   starPoints.forEach(([r, c]) => {
     const x = margin + c * cellSize;
     const y = margin + r * cellSize;
     ctx.fillStyle = '#5a3e2b';
     ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  // Stones
   for (let r = 0; r < boardSize; r++) {
     for (let c = 0; c < boardSize; c++) {
       if (board[r][c] === 0) continue;
@@ -174,7 +208,6 @@ function drawBoard() {
       ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Highlight last move
       if (r === lastMoveR && c === lastMoveC) {
         ctx.strokeStyle = '#ff4444';
         ctx.lineWidth = 2;
@@ -185,7 +218,6 @@ function drawBoard() {
     }
   }
 
-  // Win line
   if (winLine) {
     const [r1, c1] = winLine[0];
     const [r2, c2] = winLine[1];
@@ -205,8 +237,6 @@ function drawBoard() {
   }
 }
 
-let lastMoveR = -1, lastMoveC = -1;
-
 function getIntersection(px, py) {
   const c = Math.round((px - margin) / cellSize);
   const r = Math.round((py - margin) / cellSize);
@@ -218,28 +248,77 @@ function getIntersection(px, py) {
   return {r, c};
 }
 
+function analyzeLine(r, c, dr, dc, player) {
+  let countPos = 0;
+  for (let i = 1; i <= 5; i++) {
+    const nr = r + dr * i, nc = c + dc * i;
+    if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize) break;
+    if (board[nr][nc] !== player) break;
+    countPos++;
+  }
+
+  let posSpace = 0;
+  for (let i = countPos + 1; i <= 5; i++) {
+    const nr = r + dr * i, nc = c + dc * i;
+    if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize) break;
+    if (board[nr][nc] !== 0) break;
+    posSpace++;
+  }
+
+  let countNeg = 0;
+  for (let i = 1; i <= 5; i++) {
+    const nr = r - dr * i, nc = c - dc * i;
+    if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize) break;
+    if (board[nr][nc] !== player) break;
+    countNeg++;
+  }
+
+  let negSpace = 0;
+  for (let i = countNeg + 1; i <= 5; i++) {
+    const nr = r - dr * i, nc = c - dc * i;
+    if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize) break;
+    if (board[nr][nc] !== 0) break;
+    negSpace++;
+  }
+
+  const total = 1 + countPos + countNeg;
+  return { total, posSpace, negSpace };
+}
+
+function isForbidden(r, c) {
+  if (!forbiddenEnabled) return false;
+
+  const directions = [[0,1],[1,0],[1,1],[1,-1]];
+  let threeCount = 0, fourCount = 0;
+
+  for (const [dr, dc] of directions) {
+    const { total, posSpace, negSpace } = analyzeLine(r, c, dr, dc, 1);
+    if (total >= 6) return true;
+    if (total === 5) return false;
+    if (total === 4 && (posSpace >= 1 || negSpace >= 1)) fourCount++;
+    if (total === 3 && posSpace >= 1 && negSpace >= 1) threeCount++;
+  }
+
+  return threeCount >= 2 || fourCount >= 2;
+}
+
 function checkWin(r, c, player) {
   const directions = [[0,1],[1,0],[1,1],[1,-1]];
   for (const [dr, dc] of directions) {
-    let count = 1;
-    let i = 1;
+    let count = 1, i = 1;
     let startR = r, startC = c, endR = r, endC = c;
 
     while (true) {
       const nr = r + dr * i, nc = c + dc * i;
       if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize || board[nr][nc] !== player) break;
-      count++;
-      endR = nr; endC = nc;
-      i++;
+      count++; endR = nr; endC = nc; i++;
     }
 
     i = 1;
     while (true) {
       const nr = r - dr * i, nc = c - dc * i;
       if (nr < 0 || nr >= boardSize || nc < 0 || nc >= boardSize || board[nr][nc] !== player) break;
-      count++;
-      startR = nr; startC = nc;
-      i++;
+      count++; startR = nr; startC = nc; i++;
     }
 
     if (count >= 5) {
@@ -254,8 +333,8 @@ function handleClick(e) {
   if (gameOver) return;
 
   const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
+  const scaleX = displaySize / rect.width;
+  const scaleY = displaySize / rect.height;
   const px = (e.clientX - rect.left) * scaleX;
   const py = (e.clientY - rect.top) * scaleY;
 
@@ -265,6 +344,13 @@ function handleClick(e) {
   if (board[r][c] !== 0) return;
 
   board[r][c] = currentPlayer;
+
+  if (currentPlayer === 1 && isForbidden(r, c)) {
+    board[r][c] = 0;
+    statusEl.innerHTML = '⚫ <span style="color:#ff6666">禁手！黑棋不可落此位置</span>';
+    return;
+  }
+
   lastMoveR = r;
   lastMoveC = c;
 
@@ -275,7 +361,6 @@ function handleClick(e) {
     return;
   }
 
-  // Check draw
   let draw = true;
   for (let rr = 0; rr < boardSize; rr++)
     for (let cc = 0; cc < boardSize; cc++)
@@ -300,14 +385,21 @@ function newGame() {
   winLine = null;
   lastMoveR = -1;
   lastMoveC = -1;
-  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行';
+  forbiddenEnabled = chkForbidden.checked;
+  statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + (forbiddenEnabled ? ' (禁手开启)' : '');
   drawBoard();
 }
 
 canvas.addEventListener('click', handleClick);
 document.getElementById('btnRestart').addEventListener('click', newGame);
+chkForbidden.addEventListener('change', () => {
+  forbiddenEnabled = chkForbidden.checked;
+  if (!gameOver) {
+    statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + (forbiddenEnabled ? ' (禁手开启)' : '');
+  }
+});
 
-drawBoard();
+newGame();
 </script>
 </body>
 </html>

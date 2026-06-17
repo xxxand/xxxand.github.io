@@ -72,6 +72,31 @@ canvas {
   align-items: center;
 }
 .btn-back:hover { background: rgba(255,255,255,0.2); }
+.speed-selector {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.speed-btn {
+  padding: 8px 20px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: transparent;
+  color: #aaa;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.speed-btn.active {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+.speed-btn:hover:not(.active) {
+  border-color: #4caf50;
+  color: #4caf50;
+}
 .info {
   color: #888;
   margin-top: 15px;
@@ -114,6 +139,11 @@ canvas {
     <div class="score-item">最高: <span id="highScore">0</span></div>
   </div>
   <canvas id="canvas" width="500" height="500"></canvas>
+  <div class="speed-selector">
+    <button class="speed-btn" data-speed="220">慢速</button>
+    <button class="speed-btn active" data-speed="150">中速</button>
+    <button class="speed-btn" data-speed="80">快速</button>
+  </div>
   <div class="controls">
     <button class="btn btn-start" id="btnStart">开始游戏</button>
     <a href="index.html" class="btn btn-back">返回首页</a>
@@ -147,7 +177,7 @@ let score = 0;
 let highScore = localStorage.getItem('snakeHighScore') || 0;
 let gameRunning = false;
 let gameLoop;
-let gameSpeed = 100;
+let gameSpeed = 150;
 
 highScoreEl.textContent = highScore;
 
@@ -208,9 +238,6 @@ function update() {
     score += 10;
     scoreEl.textContent = score;
     placeFood();
-    if (gameSpeed > 50) gameSpeed -= 1;
-    clearInterval(gameLoop);
-    gameLoop = setInterval(gameStep, gameSpeed);
   } else {
     snake.pop();
   }
@@ -246,7 +273,6 @@ function startGame() {
   snake = [{x:10,y:10}];
   dx = 0; dy = 0;
   score = 0;
-  gameSpeed = 100;
   scoreEl.textContent = '0';
   overlay.classList.add('hidden');
   placeFood();
@@ -274,6 +300,18 @@ function changeDirection(e) {
 document.addEventListener('keydown', changeDirection);
 document.getElementById('btnStart').addEventListener('click', startGame);
 document.getElementById('btnRestart').addEventListener('click', startGame);
+
+document.querySelectorAll('.speed-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    gameSpeed = parseInt(btn.dataset.speed);
+    if (gameRunning) {
+      clearInterval(gameLoop);
+      gameLoop = setInterval(gameStep, gameSpeed);
+    }
+  });
+});
 
 draw();
 </script>
