@@ -1,44 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>扫雷</title>
-<link rel="stylesheet" href="css/common.css">
-<link rel="stylesheet" href="css/minesweeper.css">
-</head>
-<body>
-<div class="container">
-  <h1>💣 扫雷</h1>
-  <div class="header">
-    <div>
-      <div class="header-label">💣</div>
-      <div class="header-item" id="mineCount">10</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>扫雷</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/minesweeper.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>💣 扫雷</h1>
+      <div class="header">
+        <div>
+          <div class="header-label">💣</div>
+          <div class="header-item" id="mineCount">10</div>
+        </div>
+        <div>
+          <div class="header-label">⏱</div>
+          <div class="header-item" id="timer">0</div>
+        </div>
+      </div>
+      <div class="board" id="board"></div>
+      <div class="controls">
+        <button class="btn btn-new" id="btnRestart">新游戏</button>
+        <a href="index.html" class="btn btn-back">返回首页</a>
+      </div>
+      <p class="info">点击揭开 · 长按/右键标旗</p>
     </div>
-    <div>
-      <div class="header-label">⏱</div>
-      <div class="header-item" id="timer">0</div>
-    </div>
-  </div>
-  <div class="board" id="board"></div>
-  <div class="controls">
-    <button class="btn btn-new" id="btnRestart">新游戏</button>
-    <a href="index.html" class="btn btn-back">返回首页</a>
-  </div>
-  <p class="info">点击揭开 · 长按/右键标旗</p>
-</div>
 
-<div class="game-over-overlay hidden" id="overlay">
-  <div class="game-over-box">
-    <h2 id="overlayTitle"></h2>
-    <p>用时: <span id="finalTime">0</span> 秒</p>
-    <div class="game-over-btns">
-      <button class="btn btn-new" id="btnReplay">再来一局</button>
-      <button class="btn btn-cancel" id="btnDismiss">取消</button>
+    <div class="game-over-overlay hidden" id="overlay">
+      <div class="game-over-box">
+        <h2 id="overlayTitle"></h2>
+        <p>用时: <span id="finalTime">0</span> 秒</p>
+        <div class="game-over-btns">
+          <button class="btn btn-new" id="btnReplay">再来一局</button>
+          <button class="btn btn-cancel" id="btnDismiss">取消</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<script src="js/minesweeper.js"></script>
-</body>
+    <script src="js/minesweeper.js"></script>
+  </body>
 </html>

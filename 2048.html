@@ -1,46 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2048</title>
-<link rel="stylesheet" href="css/2048.css">
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div class="title">2048</div>
-    <div class="scores">
-      <div class="score-box">
-        <div class="score-label">SCORE</div>
-        <div class="score-value" id="score">0</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2048</title>
+    <link rel="stylesheet" href="css/2048.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="title">2048</div>
+        <div class="scores">
+          <div class="score-box">
+            <div class="score-label">SCORE</div>
+            <div class="score-value" id="score">0</div>
+          </div>
+          <div class="score-box">
+            <div class="score-label">BEST</div>
+            <div class="score-value" id="bestScore">0</div>
+          </div>
+        </div>
       </div>
-      <div class="score-box">
-        <div class="score-label">BEST</div>
-        <div class="score-value" id="bestScore">0</div>
+      <div class="controls">
+        <button class="new-game-btn" id="btnNewGame">新游戏</button>
+        <button class="new-game-btn undo-btn" id="btnUndo">悔一步</button>
+        <a href="index.html" class="back-btn">返回首页</a>
+      </div>
+      <div class="board" id="board"></div>
+      <p class="info">方向键 / WASD 滑动合并数字</p>
+    </div>
+
+    <div class="game-over-overlay hidden" id="overlay">
+      <div class="game-over-box">
+        <h2 id="overlayTitle">游戏结束</h2>
+        <p>得分: <span id="finalScore">0</span></p>
+        <div class="game-over-btns">
+          <button class="new-game-btn" id="btnRestart">再来一局</button>
+          <button class="new-game-btn btn-cancel" id="btnDismiss">取消</button>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="controls">
-    <button class="new-game-btn" id="btnNewGame">新游戏</button>
-    <button class="new-game-btn undo-btn" id="btnUndo">悔一步</button>
-    <a href="index.html" class="back-btn">返回首页</a>
-  </div>
-  <div class="board" id="board"></div>
-  <p class="info">方向键 / WASD 滑动合并数字</p>
-</div>
 
-<div class="game-over-overlay hidden" id="overlay">
-  <div class="game-over-box">
-    <h2 id="overlayTitle">游戏结束</h2>
-    <p>得分: <span id="finalScore">0</span></p>
-    <div class="game-over-btns">
-      <button class="new-game-btn" id="btnRestart">再来一局</button>
-      <button class="new-game-btn btn-cancel" id="btnDismiss">取消</button>
-    </div>
-  </div>
-</div>
-
-<script src="js/2048.js"></script>
-</body>
+    <script src="js/2048.js"></script>
+  </body>
 </html>

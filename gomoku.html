@@ -1,43 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>五子棋</title>
-<link rel="stylesheet" href="css/common.css">
-<link rel="stylesheet" href="css/gomoku.css">
-</head>
-<body>
-<div class="container">
-  <h1>⚫ 五子棋 ⚪</h1>
-  <div class="status" id="status">
-    黑棋 <span class="player black"></span> 先行
-  </div>
-  <canvas id="canvas"></canvas>
-  <div class="options">
-    <button class="btn btn-forbidden" id="btnForbidden">禁手：关</button>
-    <button class="btn btn-ai" id="btnAI">双人对战</button>
-    <button class="btn btn-color" id="btnColor">执黑</button>
-  </div>
-  <div class="controls">
-    <button class="btn btn-new" id="btnRestart">重新开始</button>
-    <button class="btn btn-undo" id="btnUndo">悔棋</button>
-    <a href="index.html" class="btn btn-back">返回首页</a>
-  </div>
-  <p class="info">点击棋盘落子 · 先连成五子者胜</p>
-</div>
-
-<div class="game-over-overlay hidden" id="overlay">
-  <div class="game-over-box">
-    <h2 id="overlayTitle"></h2>
-    <p id="overlayMsg"></p>
-    <div class="game-over-btns">
-      <button class="btn btn-new" id="btnReplay">再来一局</button>
-      <button class="btn btn-cancel" id="btnDismiss">取消</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>五子棋</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/gomoku.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>⚫ 五子棋 ⚪</h1>
+      <div class="status" id="status">黑棋 <span class="player black"></span> 先行</div>
+      <canvas id="canvas"></canvas>
+      <div class="options">
+        <button class="btn btn-forbidden" id="btnForbidden">禁手：关</button>
+        <button class="btn btn-ai" id="btnAI">双人对战</button>
+        <button class="btn btn-color" id="btnColor">执黑</button>
+      </div>
+      <div class="controls">
+        <button class="btn btn-new" id="btnRestart">重新开始</button>
+        <button class="btn btn-undo" id="btnUndo">悔棋</button>
+        <a href="index.html" class="btn btn-back">返回首页</a>
+      </div>
+      <p class="info">点击棋盘落子 · 先连成五子者胜</p>
     </div>
-  </div>
-</div>
 
-<script src="js/gomoku.js"></script>
-</body>
+    <div class="game-over-overlay hidden" id="overlay">
+      <div class="game-over-box">
+        <h2 id="overlayTitle"></h2>
+        <p id="overlayMsg"></p>
+        <div class="game-over-btns">
+          <button class="btn btn-new" id="btnReplay">再来一局</button>
+          <button class="btn btn-cancel" id="btnDismiss">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/gomoku.js"></script>
+  </body>
 </html>

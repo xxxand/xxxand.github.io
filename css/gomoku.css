@@ -31,8 +31,12 @@ h1 {
   border: 2px solid #555;
 }
 
-.status .player.black { background: #222; }
-.status .player.white { background: #eee; }
+.status .player.black {
+  background: #222;
+}
+.status .player.white {
+  background: #eee;
+}
 
 .status .highlight {
   color: #4caf50;
@@ -43,7 +47,7 @@ h1 {
 canvas {
   cursor: pointer;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   width: 100%;
   max-width: 630px;
   aspect-ratio: 1;
@@ -64,10 +68,12 @@ canvas {
   background: #4caf50;
   color: #fff;
 }
-.btn-new:hover { background: #45a049; }
+.btn-new:hover {
+  background: #45a049;
+}
 
 .btn-forbidden {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: #999;
   border: 1px solid #555;
   padding: 8px 24px;
@@ -84,11 +90,17 @@ canvas {
   border-color: #e67e22;
 }
 
-.btn-forbidden:hover { border-color: #e67e22; color: #e67e22; }
-.btn-forbidden.on:hover { opacity: 0.9; color: #fff; }
+.btn-forbidden:hover {
+  border-color: #e67e22;
+  color: #e67e22;
+}
+.btn-forbidden.on:hover {
+  opacity: 0.9;
+  color: #fff;
+}
 
 .btn-ai {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: #999;
   border: 1px solid #555;
   padding: 8px 24px;
@@ -105,11 +117,17 @@ canvas {
   border-color: #3498db;
 }
 
-.btn-ai:hover { border-color: #3498db; color: #3498db; }
-.btn-ai.on:hover { opacity: 0.9; color: #fff; }
+.btn-ai:hover {
+  border-color: #3498db;
+  color: #3498db;
+}
+.btn-ai.on:hover {
+  opacity: 0.9;
+  color: #fff;
+}
 
 .btn-color {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: #999;
   border: 1px solid #555;
   padding: 8px 24px;
@@ -120,18 +138,24 @@ canvas {
   transition: all 0.2s;
 }
 
-.btn-color:hover { border-color: #9b59b6; color: #9b59b6; }
+.btn-color:hover {
+  border-color: #9b59b6;
+  color: #9b59b6;
+}
 
 .btn-undo {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: #ccc;
   border: 1px solid #555;
 }
 
-.btn-undo:hover { background: rgba(255,255,255,0.15); border-color: #888; }
+.btn-undo:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #888;
+}
 
 .game-over-overlay {
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .game-over-box {
@@ -141,8 +165,17 @@ canvas {
 }
 
 @media (max-width: 500px) {
-  h1 { font-size: 2rem; }
-  .status { font-size: 1.1rem; }
-  .info { font-size: 0.8rem; }
-  .btn { padding: 8px 20px; font-size: 0.9rem; }
+  h1 {
+    font-size: 2rem;
+  }
+  .status {
+    font-size: 1.1rem;
+  }
+  .info {
+    font-size: 0.8rem;
+  }
+  .btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
 }

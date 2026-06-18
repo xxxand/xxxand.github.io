@@ -1,54 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>贪吃蛇</title>
-<link rel="stylesheet" href="css/common.css">
-<link rel="stylesheet" href="css/snake.css">
-</head>
-<body>
-<div class="container">
-  <h1>🐍 贪吃蛇</h1>
-  <div class="score-board">
-    <div class="score-item">得分: <span id="score">0</span></div>
-    <div class="score-item">最高: <span id="highScore">0</span></div>
-  </div>
-  <canvas id="canvas" width="500" height="500"></canvas>
-  <div class="speed-selector">
-    <button class="speed-btn" data-speed="220">慢速</button>
-    <button class="speed-btn active" data-speed="150">中速</button>
-    <button class="speed-btn" data-speed="80">快速</button>
-  </div>
-  <div class="controls">
-    <button class="btn btn-start" id="btnStart">开始游戏</button>
-    <a href="index.html" class="btn btn-back">返回首页</a>
-  </div>
-  <p class="info">方向键 / WASD / 屏幕滑动 / 按钮 控制移动</p>
-</div>
-
-<div class="dpad" id="dpad">
-  <div class="dpad-row">
-    <button class="dpad-btn" data-dir="up">▲</button>
-  </div>
-  <div class="dpad-row">
-    <button class="dpad-btn" data-dir="left">◀</button>
-    <button class="dpad-btn" data-dir="down">▼</button>
-    <button class="dpad-btn" data-dir="right">▶</button>
-  </div>
-</div>
-
-<div class="game-over-overlay hidden" id="overlay">
-  <div class="game-over-box">
-    <h2>游戏结束</h2>
-    <p>得分: <span id="finalScore">0</span></p>
-    <div class="game-over-btns">
-      <button class="btn btn-start" id="btnRestart">再来一局</button>
-      <button class="btn btn-cancel" id="btnDismiss">取消</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>贪吃蛇</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/snake.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🐍 贪吃蛇</h1>
+      <div class="score-board">
+        <div class="score-item">得分: <span id="score">0</span></div>
+        <div class="score-item">最高: <span id="highScore">0</span></div>
+      </div>
+      <canvas id="canvas" width="500" height="500"></canvas>
+      <div class="speed-selector">
+        <button class="speed-btn" data-speed="220">慢速</button>
+        <button class="speed-btn active" data-speed="150">中速</button>
+        <button class="speed-btn" data-speed="80">快速</button>
+      </div>
+      <div class="controls">
+        <button class="btn btn-start" id="btnStart">开始游戏</button>
+        <a href="index.html" class="btn btn-back">返回首页</a>
+      </div>
+      <p class="info">方向键 / WASD / 屏幕滑动 / 按钮 控制移动</p>
     </div>
-  </div>
-</div>
 
-<script src="js/snake.js"></script>
-</body>
+    <div class="dpad" id="dpad">
+      <div class="dpad-row">
+        <button class="dpad-btn" data-dir="up">▲</button>
+      </div>
+      <div class="dpad-row">
+        <button class="dpad-btn" data-dir="left">◀</button>
+        <button class="dpad-btn" data-dir="down">▼</button>
+        <button class="dpad-btn" data-dir="right">▶</button>
+      </div>
+    </div>
+
+    <div class="game-over-overlay hidden" id="overlay">
+      <div class="game-over-box">
+        <h2>游戏结束</h2>
+        <p>得分: <span id="finalScore">0</span></p>
+        <div class="game-over-btns">
+          <button class="btn btn-start" id="btnRestart">再来一局</button>
+          <button class="btn btn-cancel" id="btnDismiss">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/snake.js"></script>
+  </body>
 </html>

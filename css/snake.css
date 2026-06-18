@@ -48,7 +48,9 @@ canvas {
   background: #4caf50;
   color: #fff;
 }
-.btn-start:hover { background: #45a049; }
+.btn-start:hover {
+  background: #45a049;
+}
 
 .speed-selector {
   display: flex;
@@ -96,7 +98,7 @@ canvas {
   height: 50px;
   border: none;
   border-radius: 10px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #ccc;
   font-size: 1.5rem;
   cursor: pointer;
@@ -108,14 +110,18 @@ canvas {
   transition: background 0.1s;
 }
 
-.dpad-btn:active { background: rgba(76,175,80,0.5); }
+.dpad-btn:active {
+  background: rgba(76, 175, 80, 0.5);
+}
 
 @media (max-width: 600px) {
-  .dpad { display: block; }
+  .dpad {
+    display: block;
+  }
 }
 
 .game-over-overlay {
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .game-over-box {

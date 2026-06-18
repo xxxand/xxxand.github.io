@@ -11,7 +11,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   user-select: none;
   padding: 10px;
 }
@@ -24,7 +24,10 @@ body {
 /* Overlay / Game-over */
 .game-over-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,7 +72,7 @@ body {
 }
 
 .btn-back {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #ccc;
   text-decoration: none;
   display: inline-flex;
@@ -81,15 +84,15 @@ body {
   transition: all 0.2s;
 }
 .btn-back:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .btn-cancel {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: #ccc;
 }
 .btn-cancel:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Controls row */
