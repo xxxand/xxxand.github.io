@@ -1,0 +1,133 @@
+/* snake.css */
+
+body {
+  background: #1a1a2e;
+}
+
+.container {
+  max-width: 500px;
+}
+
+h1 {
+  color: #4caf50;
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.score-board {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 15px;
+}
+
+.score-item {
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.score-item span {
+  color: #4caf50;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+canvas {
+  border: 2px solid #333;
+  border-radius: 4px;
+  background: #16213e;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.btn-start {
+  background: #4caf50;
+  color: #fff;
+}
+.btn-start:hover { background: #45a049; }
+
+.speed-selector {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.speed-btn {
+  padding: 8px 20px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: transparent;
+  color: #aaa;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speed-btn.active {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.speed-btn:hover:not(.active) {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.dpad {
+  display: none;
+  margin: 10px auto 0;
+  width: 160px;
+}
+
+.dpad-row {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.dpad-btn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  color: #ccc;
+  font-size: 1.5rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+
+.dpad-btn:active { background: rgba(76,175,80,0.5); }
+
+@media (max-width: 600px) {
+  .dpad { display: block; }
+}
+
+.game-over-overlay {
+  background: rgba(0,0,0,0.7);
+}
+
+.game-over-box {
+  background: #1a1a2e;
+  border: 2px solid #4caf50;
+  color: #fff;
+}
+
+.game-over-box h2 {
+  color: #4caf50;
+}
+
+.game-over-box p {
+  font-size: 1.2rem;
+}

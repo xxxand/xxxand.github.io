@@ -1,0 +1,109 @@
+/* common.css - shared base styles across all game pages */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  user-select: none;
+  padding: 10px;
+}
+
+.container {
+  text-align: center;
+  width: 100%;
+}
+
+/* Overlay / Game-over */
+.game-over-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.game-over-box {
+  border-radius: 20px;
+  padding: 40px 50px;
+  text-align: center;
+}
+
+.game-over-box h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.game-over-box p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.game-over-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Button base */
+.btn {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back {
+  background: rgba(255,255,255,0.1);
+  color: #ccc;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+.btn-back:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.btn-cancel {
+  background: rgba(255,255,255,0.15);
+  color: #ccc;
+}
+.btn-cancel:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Controls row */
+.controls {
+  margin-top: 15px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Info text */
+.info {
+  color: #888;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}

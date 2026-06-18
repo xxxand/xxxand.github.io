@@ -1,0 +1,114 @@
+/* minesweeper.css */
+
+body {
+  background: #1a1a2e;
+}
+
+.container {
+  max-width: 400px;
+}
+
+h1 {
+  color: #e74c3c;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 5px;
+}
+
+.header-item {
+  background: #2c3e50;
+  color: #e74c3c;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  min-width: 70px;
+  text-align: center;
+}
+
+.header-label {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 2px;
+  background: #34495e;
+  padding: 4px;
+  border-radius: 6px;
+  width: 100%;
+  aspect-ratio: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cell {
+  background: #5d6d7e;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.1s;
+  aspect-ratio: 1;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+.cell:hover { background: #6e7f91; }
+
+.cell.revealed {
+  background: #bdc3c7;
+  cursor: default;
+}
+.cell.revealed:hover { background: #bdc3c7; }
+
+.cell.flagged { background: #5d6d7e; }
+.cell.mine { background: #e74c3c; }
+
+.cell[data-n="1"] { color: #3498db; }
+.cell[data-n="2"] { color: #2ecc71; }
+.cell[data-n="3"] { color: #e74c3c; }
+.cell[data-n="4"] { color: #8e44ad; }
+.cell[data-n="5"] { color: #c0392b; }
+.cell[data-n="6"] { color: #16a085; }
+.cell[data-n="7"] { color: #2c3e50; }
+.cell[data-n="8"] { color: #7f8c8d; }
+
+.btn-new {
+  background: #e74c3c;
+  color: #fff;
+}
+.btn-new:hover { background: #c0392b; }
+
+.game-over-overlay {
+  background: rgba(0,0,0,0.7);
+}
+
+.game-over-box {
+  background: #1a1a2e;
+  border: 2px solid #e74c3c;
+  color: #fff;
+}
+
+.game-over-box .win { color: #2ecc71; }
+.game-over-box .lose { color: #e74c3c; }
+
+@media (max-width: 450px) {
+  h1 { font-size: 2rem; }
+  .cell { font-size: 1rem; }
+}
