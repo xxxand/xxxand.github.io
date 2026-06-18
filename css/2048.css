@@ -154,6 +154,10 @@ body {
 .undo-btn:hover { background: #cbbeb0; }
 
 .controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
@@ -163,20 +167,39 @@ body {
 }
 
 .game-over-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
   background: rgba(238,228,218,0.73);
 }
 
 .game-over-box {
+  border-radius: 10px;
+  padding: 40px 50px;
+  text-align: center;
   background: #fff;
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .game-over-box h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
   color: #776e65;
 }
 
 .game-over-box p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
   color: #776e65;
+}
+
+.game-over-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 .btn-cancel {
@@ -184,3 +207,5 @@ body {
   color: #776e65;
 }
 .btn-cancel:hover { background: #bdb0a3; }
+
+.hidden { display: none !important; }
