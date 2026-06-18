@@ -37,47 +37,67 @@ body {
   border-left: 4px solid rgba(100, 200, 255, 0.6);
 }
 
-/* Tool card */
+/* Tools */
+.tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
 .tool-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 24px;
+  padding: 30px 24px;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.tool-card:hover::before {
+  left: 100%;
+}
+
+.tool-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(52, 152, 219, 0.5);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+  background: rgba(52, 152, 219, 0.1);
+}
+
+.tool-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
 }
 
 .tool-name {
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-  color: #e0e0e0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
 
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-th {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 10px 14px;
-  text-align: left;
-  font-weight: 600;
-  color: #ccc;
-  white-space: nowrap;
-}
-
-td {
-  padding: 8px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: #bbb;
-}
-
-tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
+.tool-desc {
+  font-size: 0.85rem;
+  color: #999;
 }
 
 /* Games */
@@ -168,15 +188,5 @@ tr:hover td {
 @media (max-width: 600px) {
   .title {
     font-size: 1.8rem;
-  }
-  .tool-card {
-    padding: 16px;
-  }
-  table {
-    font-size: 0.8rem;
-  }
-  th,
-  td {
-    padding: 6px 10px;
   }
 }

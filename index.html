@@ -12,14 +12,12 @@
 
       <section class="section">
         <h2 class="section-title">工具</h2>
-        <div class="tool-card">
-          <h3 class="tool-name">三角洲行动全面战场枪械TTK排行</h3>
-          <div class="table-wrap">
-            <table id="ttkTable">
-              <thead></thead>
-              <tbody></tbody>
-            </table>
-          </div>
+        <div class="tools">
+          <a href="dfttk.html" class="tool-card">
+            <span class="tool-icon">📊</span>
+            <div class="tool-name">三角洲行动全面战场枪械TTK排行</div>
+            <div class="tool-desc">查看各武器击杀时间数据</div>
+          </a>
         </div>
       </section>
 
@@ -52,53 +50,5 @@
         </div>
       </section>
     </div>
-
-    <script>
-      (function () {
-        fetch("dfttk.csv")
-          .then(function (res) {
-            return res.text();
-          })
-          .then(function (csv) {
-            var rows = csv.trim().split("\n");
-            if (rows.length < 2) return;
-            var headers = rows[0].split(",");
-
-            var thead = document.querySelector("#ttkTable thead");
-            var tr = document.createElement("tr");
-            headers.forEach(function (h) {
-              var th = document.createElement("th");
-              th.textContent = h.trim();
-              tr.appendChild(th);
-            });
-            thead.appendChild(tr);
-
-            var tbody = document.querySelector("#ttkTable tbody");
-            for (var i = 1; i < rows.length; i++) {
-              var cols = rows[i].split(",");
-              var bodyTr = document.createElement("tr");
-              cols.forEach(function (val, j) {
-                var td = document.createElement("td");
-                var num = parseFloat(val);
-                if (
-                  !isNaN(num) &&
-                  headers[j] !== "武器名称" &&
-                  headers[j] !== "枪械类型"
-                ) {
-                  td.textContent = num.toFixed(0);
-                } else {
-                  td.textContent = val.trim();
-                }
-                bodyTr.appendChild(td);
-              });
-              tbody.appendChild(bodyTr);
-            }
-          })
-          .catch(function () {
-            document.querySelector(".tool-card").innerHTML +=
-              '<p style="color:#e74c3c">加载 TTK 数据失败</p>';
-          });
-      })();
-    </script>
   </body>
 </html>
