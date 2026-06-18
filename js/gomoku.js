@@ -647,7 +647,6 @@ function newGame() {
   document.getElementById("overlay").classList.add("hidden");
   forbiddenEnabled = btnForbidden.classList.contains("on");
   aiEnabled = btnAI.classList.contains("on");
-  humanPlayer = btnColor.textContent === "执黑" ? 1 : 2;
   aiPlayer = humanPlayer === 1 ? 2 : 1;
   btnColor.textContent = humanPlayer === 1 ? "执黑" : "执白";
   const aiText = aiEnabled ? " (人机对战)" : "";

@@ -4,99 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>三角洲行动枪械TTK排行</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", sans-serif;
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        min-height: 100vh;
-        color: #fff;
-        padding: 40px 20px;
-      }
-
-      .container {
-        max-width: 95vw;
-        margin: 0 auto;
-      }
-
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 8px;
-      }
-
-      .subtitle {
-        color: #888;
-        margin-bottom: 24px;
-      }
-
-      .back {
-        display: inline-block;
-        color: #aaa;
-        text-decoration: none;
-        margin-bottom: 24px;
-        font-size: 0.9rem;
-      }
-      .back:hover {
-        color: #fff;
-      }
-
-      .table-wrap {
-        overflow-x: auto;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.95rem;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        overflow: hidden;
-      }
-
-      th {
-        background: rgba(255, 255, 255, 0.08);
-        padding: 12px 16px;
-        text-align: center;
-        font-weight: 600;
-        color: #ccc;
-        white-space: nowrap;
-      }
-
-      td {
-        padding: 10px 16px;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        color: #bbb;
-      }
-
-      tr:hover td {
-        background: rgba(255, 255, 255, 0.03);
-      }
-
-      .error {
-        color: #e74c3c;
-        margin-top: 20px;
-      }
-
-      @media (max-width: 600px) {
-        table {
-          font-size: 0.8rem;
-        }
-        th,
-        td {
-          padding: 8px 12px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/dfttk.css" />
   </head>
   <body>
     <div class="container">
-      <a href="index.html" class="back">← 返回首页</a>
+      <a href="index.html" class="btn-back">← 返回首页</a>
       <h1>三角洲行动全面战场枪械TTK排行</h1>
       <p class="subtitle">数据来源：dfttk.csv</p>
 
@@ -109,92 +22,6 @@
       <p class="error" id="errorMsg" style="display: none"></p>
     </div>
 
-    <script>
-      function parseCSVLine(line) {
-        var result = [];
-        var current = "";
-        var inQuotes = false;
-        for (var i = 0; i < line.length; i++) {
-          var ch = line[i];
-          if (inQuotes) {
-            if (ch === '"') {
-              if (i + 1 < line.length && line[i + 1] === '"') {
-                current += '"';
-                i++;
-              } else {
-                inQuotes = false;
-              }
-            } else {
-              current += ch;
-            }
-          } else {
-            if (ch === '"') {
-              inQuotes = true;
-            } else if (ch === ",") {
-              result.push(current.trim());
-              current = "";
-            } else {
-              current += ch;
-            }
-          }
-        }
-        result.push(current.trim());
-        return result;
-      }
-
-      (function () {
-        fetch("dfttk.csv")
-          .then(function (res) {
-            if (!res.ok) throw new Error("文件加载失败");
-            return res.text();
-          })
-          .then(function (csv) {
-            var rows = csv.trim().split("\n");
-            if (rows.length < 2) {
-              showError("CSV 数据为空");
-              return;
-            }
-            var headers = parseCSVLine(rows[0]);
-
-            var thead = document.querySelector("#ttkTable thead");
-            thead.innerHTML = "";
-            var tr = document.createElement("tr");
-            headers.forEach(function (h) {
-              var th = document.createElement("th");
-              th.textContent = h;
-              tr.appendChild(th);
-            });
-            thead.appendChild(tr);
-
-            var tbody = document.querySelector("#ttkTable tbody");
-            tbody.innerHTML = "";
-            for (var i = 1; i < rows.length; i++) {
-              if (!rows[i].trim()) continue;
-              var cols = parseCSVLine(rows[i]);
-              var bodyTr = document.createElement("tr");
-              cols.forEach(function (val) {
-                var td = document.createElement("td");
-                var num = parseFloat(val);
-                if (!isNaN(num) && val !== "") {
-                  td.textContent = num.toFixed(0);
-                } else {
-                  td.textContent = val;
-                }
-                bodyTr.appendChild(td);
-              });
-              tbody.appendChild(bodyTr);
-            }
-          })
-          .catch(function (err) {
-            showError("加载失败: " + err.message);
-          });
-
-        function showError(msg) {
-          var el = document.getElementById("errorMsg");
-          el.textContent = msg;
-          el.style.display = "block";
-        }
-      })();
-    </script>
+    <script src="js/dfttk.js" defer></script>
   </body>
 </html>

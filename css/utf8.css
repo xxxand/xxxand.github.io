@@ -1,48 +1,32 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* utf8.css — requires css/common.css */
+
 body {
-  font-family: "Segoe UI", sans-serif;
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  min-height: 100vh;
-  color: #fff;
-  padding: 40px 20px;
 }
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-.back {
-  display: inline-block;
-  color: #aaa;
-  text-decoration: none;
-  margin-bottom: 24px;
-  font-size: 0.9rem;
-}
-.back:hover {
-  color: #fff;
-}
+
 h1 {
   font-size: 1.8rem;
   margin-bottom: 8px;
 }
+
 .subtitle {
   color: #888;
   margin-bottom: 24px;
   font-size: 0.9rem;
 }
+
 .row {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 16px;
 }
+
 label {
   font-size: 0.9rem;
   color: #aaa;
 }
+
 textarea {
   width: 100%;
   min-height: 120px;
@@ -55,16 +39,21 @@ textarea {
   font-size: 0.95rem;
   resize: vertical;
 }
+
 textarea:focus {
   outline: none;
   border-color: rgba(100, 200, 255, 0.5);
 }
+
 .btns {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
-.btn {
+
+.btn-convert {
+  background: #27ae60;
+  color: #fff;
   padding: 10px 28px;
   border: none;
   border-radius: 8px;
@@ -73,35 +62,46 @@ textarea:focus {
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-convert {
-  background: #27ae60;
-  color: #fff;
-}
 .btn-convert:hover {
   background: #219a52;
 }
+
 .btn-copy {
   background: rgba(255, 255, 255, 0.1);
   color: #ccc;
+  padding: 10px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 .btn-copy:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
 .btn-swap {
   background: rgba(255, 255, 255, 0.06);
   color: #aaa;
   font-size: 1.2rem;
   padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 .btn-swap:hover {
   background: rgba(255, 255, 255, 0.12);
 }
+
 .mode {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
+
 @media (max-width: 600px) {
   textarea {
     min-height: 100px;

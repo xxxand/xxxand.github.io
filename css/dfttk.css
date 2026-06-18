@@ -1,0 +1,67 @@
+/* dfttk.css — shared with common.css for reset/body */
+
+body {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+}
+
+.container {
+  max-width: 95vw;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #888;
+  margin-bottom: 24px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 12px 16px;
+  text-align: center;
+  font-weight: 600;
+  color: #ccc;
+  white-space: nowrap;
+}
+
+td {
+  padding: 10px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #bbb;
+}
+
+tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.error {
+  color: #e74c3c;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  table {
+    font-size: 0.8rem;
+  }
+  th,
+  td {
+    padding: 8px 12px;
+  }
+}
