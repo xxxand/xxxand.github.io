@@ -1,5 +1,7 @@
 node_modules/
 package-lock.json
+.prettierrc
+package.json
 .DS_Store
 Thumbs.db
 *.log
