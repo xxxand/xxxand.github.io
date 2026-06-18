@@ -1,4 +1,4 @@
-document.addEventListener('selectstart', e => { if (e.target.closest('canvas')) e.preventDefault(); });
+﻿document.addEventListener('selectstart', e => { if (e.target.closest('canvas')) e.preventDefault(); });
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');
@@ -402,7 +402,7 @@ function handleClick(e) {
   board[r][c] = currentPlayer;
   if (currentPlayer === 1 && isForbidden(r, c)) {
     board[r][c] = 0;
-    statusEl.innerHTML = '�?<span style="color:#ff6666">禁手！黑棋不可落此位�?/span>';
+    statusEl.innerHTML = '⚫ <span style="color:#ff6666">禁手！黑棋不可落此位置</span>';
     return;
   }
   moveHistory.push({r, c, player: currentPlayer});
@@ -446,7 +446,7 @@ function undoMove() {
   }
   currentPlayer = aiEnabled ? humanPlayer : (moveHistory.length > 0 ? (moveHistory[moveHistory.length - 1].player === 1 ? 2 : 1) : 1);
   const aiText = aiEnabled ? ' (人机对战)' : '';
-  const fbText = forbiddenEnabled ? ' (禁手开�?' : '';
+  const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
   statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + aiText;
   drawBoard();
 }
@@ -466,7 +466,7 @@ function newGame() {
   aiPlayer = humanPlayer === 1 ? 2 : 1;
   btnColor.textContent = humanPlayer === 1 ? '执黑' : '执白';
   const aiText = aiEnabled ? ' (人机对战)' : '';
-  const fbText = forbiddenEnabled ? ' (禁手开�?' : '';
+  const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
   statusEl.innerHTML = '黑棋 <span class="player black"></span> 先行' + fbText + aiText;
   drawBoard();
   if (aiEnabled && aiPlayer === 1) aiMove();
@@ -492,7 +492,7 @@ btnForbidden.addEventListener('click', () => {
   btnForbidden.textContent = forbiddenEnabled ? '禁手：开' : '禁手：关';
   if (!gameOver) {
     const aiText = aiEnabled ? ' (人机对战)' : '';
-    const fbText = forbiddenEnabled ? ' (禁手开�?' : '';
+    const fbText = forbiddenEnabled ? ' (禁手开启)' : '';
     statusEl.innerHTML = `${currentPlayer === 1 ? '黑棋' : '白棋'} <span class="player ${currentPlayer === 1 ? 'black' : 'white'}"></span> ${currentPlayer === 1 ? '先行' : '落子'}` + fbText + aiText;
   }
 });

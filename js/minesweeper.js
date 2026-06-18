@@ -1,4 +1,4 @@
-document.addEventListener('selectstart', e => { if (e.target.closest('.board')) e.preventDefault(); });
+﻿document.addEventListener('selectstart', e => { if (e.target.closest('.board')) e.preventDefault(); });
 
 const ROWS = 9, COLS = 9, MINES = 10;
 let board = [];
@@ -164,7 +164,7 @@ function checkWin() {
 
   renderBoard();
   stopTimer();
-  overlayTitle.innerHTML = '<span class="win">你赢�?</span>';
+  overlayTitle.innerHTML = '<span class="win">你赢了!</span>';
   finalTimeEl.textContent = timeElapsed;
   overlay.classList.remove('hidden');
 }

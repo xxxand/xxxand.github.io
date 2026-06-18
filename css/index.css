@@ -1,5 +1,11 @@
 /* index.css - game hub landing page */
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -11,7 +17,9 @@ body {
 }
 
 .container {
+  text-align: center;
   max-width: 900px;
+  width: 100%;
 }
 
 .title {
