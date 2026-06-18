@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UTF-8 互转</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        min-height: 100vh;
+        color: #fff;
+        padding: 40px 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .back {
+        display: inline-block;
+        color: #aaa;
+        text-decoration: none;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+      }
+      .back:hover {
+        color: #fff;
+      }
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+      }
+      .subtitle {
+        color: #888;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+      }
+      .row {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      label {
+        font-size: 0.9rem;
+        color: #aaa;
+      }
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        color: #ddd;
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 0.95rem;
+        resize: vertical;
+      }
+      textarea:focus {
+        outline: none;
+        border-color: rgba(100, 200, 255, 0.5);
+      }
+      .btns {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 28px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-convert {
+        background: #27ae60;
+        color: #fff;
+      }
+      .btn-convert:hover {
+        background: #219a52;
+      }
+      .btn-copy {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ccc;
+      }
+      .btn-copy:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .btn-swap {
+        background: rgba(255, 255, 255, 0.06);
+        color: #aaa;
+        font-size: 1.2rem;
+        padding: 10px 16px;
+      }
+      .btn-swap:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .mode {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      @media (max-width: 600px) {
+        textarea {
+          min-height: 100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back">← 返回首页</a>
+      <h1>UTF-8 互转</h1>
+      <p class="subtitle">中文 ↔ UTF-8 十六进制</p>
+
+      <div class="mode">
+        <span id="modeText">当前：中文 → UTF-8</span>
+        <button class="btn btn-swap" id="btnSwap" title="切换方向">⇄</button>
+      </div>
+      <div class="row">
+        <label for="inputBox">输入</label>
+        <textarea
+          id="inputBox"
+          placeholder="输入中文或 UTF-8 十六进制（如 E4 B8 AD）..."
+        ></textarea>
+      </div>
+      <div class="btns">
+        <button class="btn btn-convert" id="btnConvert">转换</button>
+        <button class="btn btn-copy" id="btnCopy">复制结果</button>
+      </div>
+      <div class="row" style="margin-top: 16px">
+        <label for="outputBox">输出</label>
+        <textarea id="outputBox" readonly></textarea>
+      </div>
+    </div>
+
+    <script>
+      var direction = 0;
+      var inputBox = document.getElementById("inputBox");
+      var outputBox = document.getElementById("outputBox");
+      var modeText = document.getElementById("modeText");
+
+      function textToUTF8(str) {
+        var encoder = new TextEncoder();
+        var bytes = encoder.encode(str);
+        var result = [];
+        for (var i = 0; i < bytes.length; i++) {
+          result.push(bytes[i].toString(16).toUpperCase().padStart(2, "0"));
+        }
+        return result.join(" ");
+      }
+
+      function utf8ToText(str) {
+        var hexes = str.trim().split(/[\s,]+/);
+        var bytes = new Uint8Array(hexes.length);
+        for (var i = 0; i < hexes.length; i++) {
+          bytes[i] = parseInt(hexes[i], 16);
+        }
+        var decoder = new TextDecoder("utf-8");
+        return decoder.decode(bytes);
+      }
+
+      document.getElementById("btnConvert").addEventListener("click", function () {
+        var input = inputBox.value;
+        try {
+          outputBox.value = direction === 0 ? textToUTF8(input) : utf8ToText(input);
+        } catch (e) {
+          outputBox.value = "转换出错，请检查输入格式";
+        }
+      });
+
+      document.getElementById("btnCopy").addEventListener("click", function () {
+        outputBox.select();
+        document.execCommand("copy");
+      });
+
+      document.getElementById("btnSwap").addEventListener("click", function () {
+        direction = direction === 0 ? 1 : 0;
+        modeText.textContent =
+          direction === 0 ? "当前：中文 → UTF-8" : "当前：UTF-8 → 中文";
+        outputBox.value = "";
+      });
+    </script>
+  </body>
+</html>
