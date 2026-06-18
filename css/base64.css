@@ -1,5 +1,9 @@
 /* base64.css — requires css/common.css */
 
+.container {
+  max-width: 560px;
+}
+
 body {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   color: #fff;
@@ -105,6 +109,13 @@ textarea:focus {
 
 .output-row {
   margin-top: 16px;
+}
+
+.back-top {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
 }
 
 @media (max-width: 600px) {
