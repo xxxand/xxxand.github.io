@@ -265,3 +265,32 @@ body {
 .hidden {
   display: none !important;
 }
+
+@media (max-width: 500px) {
+  .title {
+    font-size: 2.2rem;
+  }
+  .tile {
+    font-size: 1.4rem;
+  }
+  .tile[data-value="128"],
+  .tile[data-value="256"],
+  .tile[data-value="512"] {
+    font-size: 1.1rem;
+  }
+  .tile[data-value="1024"],
+  .tile[data-value="2048"] {
+    font-size: 1rem;
+  }
+  .tile[data-value="4096"],
+  .tile[data-value="8192"] {
+    font-size: 0.85rem;
+  }
+  .score-value {
+    font-size: 1.2rem;
+  }
+  .score-box {
+    padding: 6px 14px;
+    min-width: 60px;
+  }
+}
