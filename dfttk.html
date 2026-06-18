@@ -109,6 +109,38 @@
     </div>
 
     <script>
+      function parseCSVLine(line) {
+        var result = [];
+        var current = "";
+        var inQuotes = false;
+        for (var i = 0; i < line.length; i++) {
+          var ch = line[i];
+          if (inQuotes) {
+            if (ch === '"') {
+              if (i + 1 < line.length && line[i + 1] === '"') {
+                current += '"';
+                i++;
+              } else {
+                inQuotes = false;
+              }
+            } else {
+              current += ch;
+            }
+          } else {
+            if (ch === '"') {
+              inQuotes = true;
+            } else if (ch === ",") {
+              result.push(current.trim());
+              current = "";
+            } else {
+              current += ch;
+            }
+          }
+        }
+        result.push(current.trim());
+        return result;
+      }
+
       (function () {
         fetch("dfttk.csv")
           .then(function (res) {
@@ -121,14 +153,14 @@
               showError("CSV 数据为空");
               return;
             }
-            var headers = rows[0].split(",");
+            var headers = parseCSVLine(rows[0]);
 
             var thead = document.querySelector("#ttkTable thead");
             thead.innerHTML = "";
             var tr = document.createElement("tr");
             headers.forEach(function (h) {
               var th = document.createElement("th");
-              th.textContent = h.trim();
+              th.textContent = h;
               tr.appendChild(th);
             });
             thead.appendChild(tr);
@@ -136,16 +168,16 @@
             var tbody = document.querySelector("#ttkTable tbody");
             tbody.innerHTML = "";
             for (var i = 1; i < rows.length; i++) {
-              var cols = rows[i].split(",");
-              if (cols.length === 0 || (cols.length === 1 && !cols[0].trim())) continue;
+              if (!rows[i].trim()) continue;
+              var cols = parseCSVLine(rows[i]);
               var bodyTr = document.createElement("tr");
-              cols.forEach(function (val, j) {
+              cols.forEach(function (val) {
                 var td = document.createElement("td");
                 var num = parseFloat(val);
-                if (!isNaN(num) && val.trim() !== "") {
+                if (!isNaN(num) && val !== "") {
                   td.textContent = num.toFixed(0);
                 } else {
-                  td.textContent = val.trim();
+                  td.textContent = val;
                 }
                 bodyTr.appendChild(td);
               });
