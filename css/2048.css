@@ -24,13 +24,6 @@ body {
   padding: 20px;
 }
 
-/* Override dark-theme button defaults */
-.btn,
-.btn-back,
-.btn-cancel {
-  /* Hidden — 2048 uses its own button classes */
-}
-
 .header {
   display: flex;
   justify-content: space-between;
