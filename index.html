@@ -3,39 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>游戏合集</title>
+    <title>箩煌</title>
     <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
     <div class="container">
-      <h1 class="title">游戏合集</h1>
-      <p class="subtitle">选择一个游戏开始吧</p>
+      <h1 class="title">本主页归属于箩煌</h1>
 
-      <div class="games">
-        <a href="snake.html" class="game-card snake">
-          <span class="game-icon">🐍</span>
-          <div class="game-name">贪吃蛇</div>
-          <div class="game-desc">经典贪吃蛇<br />键盘/触屏控制，可调速</div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">工具</h2>
+        <div class="tool-card">
+          <h3 class="tool-name">三角洲行动全面战场枪械TTK排行</h3>
+          <div class="table-wrap">
+            <table id="ttkTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <a href="2048.html" class="game-card g2048">
-          <span class="game-icon">🔢</span>
-          <div class="game-name">2048</div>
-          <div class="game-desc">数字合并益智游戏<br />方向键滑动，凑出2048</div>
-        </a>
+      <section class="section">
+        <h2 class="section-title">游戏</h2>
+        <div class="games">
+          <a href="snake.html" class="game-card snake">
+            <span class="game-icon">🐍</span>
+            <div class="game-name">贪吃蛇</div>
+            <div class="game-desc">经典贪吃蛇<br />键盘/触屏控制，可调速</div>
+          </a>
 
-        <a href="gomoku.html" class="game-card gomoku">
-          <span class="game-icon">⚫⚪</span>
-          <div class="game-name">五子棋</div>
-          <div class="game-desc">双人对战 / 人机对战<br />点击落子，先连五子者胜</div>
-        </a>
+          <a href="2048.html" class="game-card g2048">
+            <span class="game-icon">🔢</span>
+            <div class="game-name">2048</div>
+            <div class="game-desc">数字合并益智游戏<br />方向键滑动，凑出2048</div>
+          </a>
 
-        <a href="minesweeper.html" class="game-card mine">
-          <span class="game-icon">💣</span>
-          <div class="game-name">扫雷</div>
-          <div class="game-desc">9×9 经典扫雷<br />点击揭开，长按标旗</div>
-        </a>
-      </div>
+          <a href="gomoku.html" class="game-card gomoku">
+            <span class="game-icon">⚫⚪</span>
+            <div class="game-name">五子棋</div>
+            <div class="game-desc">双人对战 / 人机对战<br />点击落子，先连五子者胜</div>
+          </a>
+
+          <a href="minesweeper.html" class="game-card mine">
+            <span class="game-icon">💣</span>
+            <div class="game-name">扫雷</div>
+            <div class="game-desc">9×9 经典扫雷<br />点击揭开，长按标旗</div>
+          </a>
+        </div>
+      </section>
     </div>
+
+    <script>
+      (function () {
+        fetch("dfttk.csv")
+          .then(function (res) {
+            return res.text();
+          })
+          .then(function (csv) {
+            var rows = csv.trim().split("\n");
+            if (rows.length < 2) return;
+            var headers = rows[0].split(",");
+
+            var thead = document.querySelector("#ttkTable thead");
+            var tr = document.createElement("tr");
+            headers.forEach(function (h) {
+              var th = document.createElement("th");
+              th.textContent = h.trim();
+              tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+
+            var tbody = document.querySelector("#ttkTable tbody");
+            for (var i = 1; i < rows.length; i++) {
+              var cols = rows[i].split(",");
+              var bodyTr = document.createElement("tr");
+              cols.forEach(function (val, j) {
+                var td = document.createElement("td");
+                var num = parseFloat(val);
+                if (
+                  !isNaN(num) &&
+                  headers[j] !== "武器名称" &&
+                  headers[j] !== "枪械类型"
+                ) {
+                  td.textContent = num.toFixed(0);
+                } else {
+                  td.textContent = val.trim();
+                }
+                bodyTr.appendChild(td);
+              });
+              tbody.appendChild(bodyTr);
+            }
+          })
+          .catch(function () {
+            document.querySelector(".tool-card").innerHTML +=
+              '<p style="color:#e74c3c">加载 TTK 数据失败</p>';
+          });
+      })();
+    </script>
   </body>
 </html>
