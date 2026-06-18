@@ -103,6 +103,10 @@ textarea:focus {
   margin-bottom: 4px;
 }
 
+.output-row {
+  margin-top: 16px;
+}
+
 @media (max-width: 600px) {
   textarea {
     min-height: 100px;

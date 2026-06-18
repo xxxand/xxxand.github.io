@@ -33,7 +33,7 @@ function parseCSVLine(line) {
 function showError(msg) {
   var el = document.getElementById("errorMsg");
   el.textContent = msg;
-  el.style.display = "block";
+  el.classList.remove("is-hidden");
 }
 
 (function () {

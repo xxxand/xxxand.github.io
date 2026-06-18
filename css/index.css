@@ -1,17 +1,10 @@
-/* index.css */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* index.css — requires css/common.css */
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  min-height: 100vh;
-  color: #fff;
   padding: 40px 20px;
+  color: #fff;
 }
 
 .container {

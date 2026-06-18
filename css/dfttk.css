@@ -57,6 +57,10 @@ tr:hover td {
   margin-top: 20px;
 }
 
+.is-hidden {
+  display: none;
+}
+
 @media (max-width: 600px) {
   table {
     font-size: 0.8rem;
