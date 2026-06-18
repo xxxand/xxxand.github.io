@@ -10,7 +10,7 @@ h1 {
 }
 
 .subtitle {
-  color: #888;
+  color: #aaa;
   margin-bottom: 24px;
   font-size: 0.9rem;
 }
@@ -24,7 +24,7 @@ h1 {
 
 label {
   font-size: 0.9rem;
-  color: #aaa;
+  color: #ccc;
 }
 
 textarea {
@@ -32,9 +32,9 @@ textarea {
   min-height: 120px;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  color: #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #eee;
   font-family: "Consolas", "Courier New", monospace;
   font-size: 0.95rem;
   resize: vertical;
