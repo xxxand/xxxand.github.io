@@ -57,6 +57,7 @@ canvas {
   aspect-ratio: 1;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 .controls {
   margin-top: 15px;
@@ -213,6 +214,7 @@ canvas {
 </div>
 
 <script>
+document.addEventListener('selectstart', e => { if (e.target.closest('canvas')) e.preventDefault(); });
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');

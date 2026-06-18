@@ -65,6 +65,8 @@ body {
   aspect-ratio: 1;
   margin-bottom: 15px;
   touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 .tile {
   background: rgba(238,228,218,0.35);
@@ -214,6 +216,7 @@ body {
 </div>
 
 <script>
+document.addEventListener('selectstart', e => { if (e.target.closest('.board')) e.preventDefault(); });
 const boardEl = document.getElementById('board');
 const scoreEl = document.getElementById('score');
 const bestScoreEl = document.getElementById('bestScore');
