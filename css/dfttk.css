@@ -75,6 +75,22 @@ tr:hover td {
   color: #fff;
 }
 
+.sortable th {
+  cursor: pointer;
+  user-select: none;
+}
+.sortable th:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.sort-arrow {
+  font-size: 0.7rem;
+  margin-left: 4px;
+  opacity: 0.5;
+}
+.sort-arrow.active {
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
   table {
     font-size: 0.8rem;

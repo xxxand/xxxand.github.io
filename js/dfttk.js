@@ -36,6 +36,104 @@ function showError(msg) {
   el.classList.remove("is-hidden");
 }
 
+var sortColumn = -1;
+var sortAsc = true;
+var originalRows = [];
+var headers = [];
+var seqIdx = 0;
+
+function getSeqIdx() {
+  for (var i = 0; i < headers.length; i++) {
+    if (headers[i] === "序号") return i;
+  }
+  return 0;
+}
+
+function compareRows(a, b, colIdx, asc) {
+  var va = a[colIdx];
+  var vb = b[colIdx];
+  var na = parseFloat(va);
+  var nb = parseFloat(vb);
+  var result;
+  if (!isNaN(na) && !isNaN(nb) && va !== "" && vb !== "") {
+    result = na - nb;
+  } else {
+    result = String(va).localeCompare(String(vb), "zh");
+  }
+  if (result !== 0) return asc ? result : -result;
+  var si = seqIdx;
+  return parseInt(a[si]) - parseInt(b[si]);
+}
+
+function renderHeaders() {
+  var thead = document.querySelector("#ttkTable thead");
+  thead.innerHTML = "";
+  var tr = document.createElement("tr");
+  for (var i = 0; i < headers.length; i++) {
+    var th = document.createElement("th");
+    th.textContent = headers[i];
+    if (i === sortColumn) {
+      var arrow = document.createElement("span");
+      arrow.className = "sort-arrow active";
+      arrow.textContent = sortAsc ? " ▲" : " ▼";
+      th.appendChild(arrow);
+    }
+    th.addEventListener(
+      "click",
+      (function (idx) {
+        return function () {
+          if (sortColumn === idx) {
+            if (sortAsc) {
+              sortAsc = false;
+            } else {
+              sortColumn = -1;
+              sortAsc = true;
+            }
+          } else {
+            sortColumn = idx;
+            sortAsc = true;
+          }
+          renderAll();
+        };
+      })(i)
+    );
+    tr.appendChild(th);
+  }
+  thead.appendChild(tr);
+}
+
+function renderBody(rows) {
+  var tbody = document.querySelector("#ttkTable tbody");
+  tbody.innerHTML = "";
+  for (var i = 0; i < rows.length; i++) {
+    var cols = rows[i];
+    var bodyTr = document.createElement("tr");
+    for (var j = 0; j < cols.length; j++) {
+      var td = document.createElement("td");
+      var num = parseFloat(cols[j]);
+      if (!isNaN(num) && cols[j] !== "") {
+        td.textContent = num.toFixed(0);
+      } else {
+        td.textContent = cols[j];
+      }
+      bodyTr.appendChild(td);
+    }
+    tbody.appendChild(bodyTr);
+  }
+}
+
+function renderAll() {
+  renderHeaders();
+  if (sortColumn >= 0) {
+    var sorted = originalRows.slice().sort(function (a, b) {
+      return compareRows(a, b, sortColumn, sortAsc);
+    });
+    renderBody(sorted);
+  } else {
+    renderBody(originalRows);
+  }
+}
+
 (function () {
   fetch("dfttk.csv")
     .then(function (res) {
@@ -48,36 +146,17 @@ function showError(msg) {
         showError("CSV 数据为空");
         return;
       }
-      var headers = parseCSVLine(rows[0]);
+      headers = parseCSVLine(rows[0]);
+      seqIdx = getSeqIdx();
 
-      var thead = document.querySelector("#ttkTable thead");
-      thead.innerHTML = "";
-      var tr = document.createElement("tr");
-      headers.forEach(function (h) {
-        var th = document.createElement("th");
-        th.textContent = h;
-        tr.appendChild(th);
-      });
-      thead.appendChild(tr);
-
-      var tbody = document.querySelector("#ttkTable tbody");
-      tbody.innerHTML = "";
+      originalRows = [];
       for (var i = 1; i < rows.length; i++) {
         if (!rows[i].trim()) continue;
-        var cols = parseCSVLine(rows[i]);
-        var bodyTr = document.createElement("tr");
-        cols.forEach(function (val) {
-          var td = document.createElement("td");
-          var num = parseFloat(val);
-          if (!isNaN(num) && val !== "") {
-            td.textContent = num.toFixed(0);
-          } else {
-            td.textContent = val;
-          }
-          bodyTr.appendChild(td);
-        });
-        tbody.appendChild(bodyTr);
+        originalRows.push(parseCSVLine(rows[i]));
       }
+
+      document.getElementById("ttkTable").classList.add("sortable");
+      renderAll();
     })
     .catch(function (err) {
       showError("加载失败: " + err.message);
