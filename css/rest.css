@@ -1,0 +1,15 @@
+/* rest.css — requires css/common.css */
+
+body {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: #fff;
+  align-items: flex-start;
+}
+
+.rest-text {
+  font-size: 6rem;
+  font-weight: bold;
+  letter-spacing: 0.8em;
+  text-align: center;
+  margin-top: 30vh;
+}
