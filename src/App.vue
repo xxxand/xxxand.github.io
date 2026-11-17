@@ -233,7 +233,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
         </svg>
         <h1>计算器</h1>
       </div>
-      <p class="masthead-note">无需联网，记录只存本机</p>
+      <p class="masthead-note">本地计算，记录仅存本机</p>
     </header>
 
     <main class="sheet">
