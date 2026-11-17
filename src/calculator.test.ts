@@ -9,22 +9,36 @@ import {
   getExpression,
   getPendingOperator,
   reduce,
-} from './calculator.js'
+} from './calculator.ts'
+import type {
+  CalculatorAction,
+  CalculatorState,
+  Operator,
+} from './calculator.ts'
 
-function run(actions, start = createInitialState()) {
+function run(
+  actions: CalculatorAction[],
+  start: CalculatorState = createInitialState(),
+): CalculatorState {
   return actions.reduce((state, action) => reduce(state, action), start)
 }
 
-const digit = (value) => ({ type: 'digit', value: String(value) })
-const digits = (value) =>
+const digit = (value: string | number): CalculatorAction => ({
+  type: 'digit',
+  value: String(value),
+})
+const digits = (value: string | number): CalculatorAction[] =>
   [...String(value)].map((character) => digit(character))
-const dot = () => ({ type: 'dot' })
-const equals = () => ({ type: 'equals' })
-const clear = () => ({ type: 'clear' })
-const backspace = () => ({ type: 'backspace' })
-const percent = () => ({ type: 'percent' })
-const toggleSign = () => ({ type: 'toggle-sign' })
-const operator = (value) => ({ type: 'operator', value })
+const dot = (): CalculatorAction => ({ type: 'dot' })
+const equals = (): CalculatorAction => ({ type: 'equals' })
+const clear = (): CalculatorAction => ({ type: 'clear' })
+const backspace = (): CalculatorAction => ({ type: 'backspace' })
+const percent = (): CalculatorAction => ({ type: 'percent' })
+const toggleSign = (): CalculatorAction => ({ type: 'toggle-sign' })
+const operator = (value: Operator): CalculatorAction => ({
+  type: 'operator',
+  value,
+})
 
 test('starts with a zero on the display', () => {
   const state = createInitialState()
@@ -72,13 +86,27 @@ test('respects operator precedence', () => {
 test('evaluates operators of equal precedence left to right', () => {
   assert.equal(
     getDisplay(
-      run([...digits(8), operator('/'), ...digits(4), operator('/'), ...digits(2), equals()]),
+      run([
+        ...digits(8),
+        operator('/'),
+        ...digits(4),
+        operator('/'),
+        ...digits(2),
+        equals(),
+      ]),
     ),
     '1',
   )
   assert.equal(
     getDisplay(
-      run([...digits(10), operator('-'), ...digits(3), operator('-'), ...digits(2), equals()]),
+      run([
+        ...digits(10),
+        operator('-'),
+        ...digits(3),
+        operator('-'),
+        ...digits(2),
+        equals(),
+      ]),
     ),
     '5',
   )
@@ -109,7 +137,14 @@ test('reports division by zero and starts over on the next digit', () => {
 })
 
 test('normalizes floating point noise', () => {
-  const state = run([dot(), digit(1), operator('+'), dot(), digit(2), equals()])
+  const state = run([
+    dot(),
+    digit(1),
+    operator('+'),
+    dot(),
+    digit(2),
+    equals(),
+  ])
   assert.equal(getDisplay(state), '0.3')
 })
 
@@ -127,7 +162,10 @@ test('shows negative operands in parentheses', () => {
 
 test('toggles the sign of the current entry and of a result', () => {
   assert.equal(getDisplay(run([...digits(12), toggleSign()])), '-12')
-  assert.equal(getDisplay(run([...digits(12), toggleSign(), toggleSign()])), '12')
+  assert.equal(
+    getDisplay(run([...digits(12), toggleSign(), toggleSign()])),
+    '12',
+  )
   assert.equal(getDisplay(run([digit(0), toggleSign()])), '0')
 
   const evaluated = run([...digits(5), operator('+'), ...digits(4), equals()])
@@ -140,7 +178,10 @@ test('toggles the sign of the current entry and of a result', () => {
 test('turns percentages into hundredths', () => {
   const state = run([...digits(50), percent()])
   assert.equal(getDisplay(state), '0.5')
-  assert.equal(getDisplay(run([operator('+'), digit(2), equals()], state)), '2.5')
+  assert.equal(
+    getDisplay(run([operator('+'), digit(2), equals()], state)),
+    '2.5',
+  )
 
   const evaluated = run([...digits(1), operator('/'), ...digits(4), equals()])
   assert.equal(getDisplay(reduce(evaluated, percent())), '0.0025')
@@ -149,7 +190,10 @@ test('turns percentages into hundredths', () => {
 test('backspace removes digits, signs, and pending operators', () => {
   assert.equal(getDisplay(run([...digits(123), backspace()])), '12')
   assert.equal(getDisplay(run([digit(7), backspace()])), '0')
-  assert.equal(getDisplay(run([...digits(8), toggleSign(), backspace()])), '0')
+  assert.equal(
+    getDisplay(run([...digits(8), toggleSign(), backspace()])),
+    '0',
+  )
 
   const undone = run([...digits(5), operator('+'), backspace()])
   assert.deepEqual(undone.tokens, [])
@@ -158,7 +202,13 @@ test('backspace removes digits, signs, and pending operators', () => {
 })
 
 test('clear returns to the initial state', () => {
-  const state = run([...digits(12), operator('*'), ...digits(3), equals(), clear()])
+  const state = run([
+    ...digits(12),
+    operator('*'),
+    ...digits(3),
+    equals(),
+    clear(),
+  ])
   assert.deepEqual(state, createInitialState())
 })
 
@@ -177,7 +227,13 @@ test('continues calculating from a result', () => {
 })
 
 test('starts a new calculation when a digit is pressed after equals', () => {
-  const state = run([...digits(2), operator('+'), ...digits(3), equals(), digit(7)])
+  const state = run([
+    ...digits(2),
+    operator('+'),
+    ...digits(3),
+    equals(),
+    digit(7),
+  ])
   assert.equal(state.phase, 'input')
   assert.equal(getDisplay(state), '7')
   assert.equal(getExpression(state), '')
@@ -194,9 +250,20 @@ test('loads a stored value as the current result', () => {
 })
 
 test('shows pending operators', () => {
-  assert.equal(getPendingOperator(run([...digits(5), operator('+')])), '+')
-  assert.equal(getPendingOperator(run([...digits(5), operator('+'), digit(3)])), '+')
-  assert.equal(getPendingOperator(run([...digits(5), operator('+'), digit(3), equals()])), null)
+  assert.equal(
+    getPendingOperator(run([...digits(5), operator('+')])),
+    '+',
+  )
+  assert.equal(
+    getPendingOperator(run([...digits(5), operator('+'), digit(3)])),
+    '+',
+  )
+  assert.equal(
+    getPendingOperator(
+      run([...digits(5), operator('+'), digit(3), equals()]),
+    ),
+    null,
+  )
 })
 
 test('formats number display edge cases', () => {
@@ -211,12 +278,18 @@ test('formats number display edge cases', () => {
 })
 
 test('ignores repeated equals presses', () => {
-  const evaluated = run([...digits(2), operator('+'), ...digits(3), equals()])
+  const evaluated = run([
+    ...digits(2),
+    operator('+'),
+    ...digits(3),
+    equals(),
+  ])
   const repeated = reduce(evaluated, equals())
   assert.deepEqual(repeated, evaluated)
 })
 
 test('ignores unknown actions', () => {
   const state = createInitialState()
-  assert.equal(reduce(state, { type: 'nope' }), state)
+  const unknownAction = { type: 'nope' } as unknown as CalculatorAction
+  assert.equal(reduce(state, unknownAction), state)
 })

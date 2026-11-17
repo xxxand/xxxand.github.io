@@ -1,5 +1,34 @@
-const OPERATORS = new Set(['+', '-', '*', '/'])
-const SYMBOLS = { '+': '+', '-': '−', '*': '×', '/': '÷' }
+export type Operator = '+' | '-' | '*' | '/'
+export type Phase = 'input' | 'evaluated' | 'error'
+export type Token = number | Operator
+
+export type CalculatorAction =
+  | { type: 'digit'; value: string }
+  | { type: 'dot' }
+  | { type: 'toggle-sign' }
+  | { type: 'percent' }
+  | { type: 'backspace' }
+  | { type: 'clear' }
+  | { type: 'operator'; value: Operator }
+  | { type: 'equals' }
+  | { type: 'load'; value: number }
+
+export interface CalculatorState {
+  tokens: Token[]
+  entry: string
+  phase: Phase
+  result: number | null
+  expression: string | null
+  error: string | null
+}
+
+const OPERATORS: ReadonlySet<string> = new Set(['+', '-', '*', '/'])
+const SYMBOLS: Record<Operator, string> = {
+  '+': '+',
+  '-': '−',
+  '*': '×',
+  '/': '÷',
+}
 const MAX_INPUT_DIGITS = 15
 const PRECISION = 12
 
@@ -10,7 +39,7 @@ const numberFormatter = new Intl.NumberFormat('en-US', {
 
 export class CalculatorError extends Error {}
 
-export function createInitialState() {
+export function createInitialState(): CalculatorState {
   return {
     tokens: [],
     entry: '',
@@ -21,29 +50,29 @@ export function createInitialState() {
   }
 }
 
-export function isOperator(value) {
-  return OPERATORS.has(value)
+export function isOperator(value: unknown): value is Operator {
+  return typeof value === 'string' && OPERATORS.has(value)
 }
 
-function normalize(value) {
+function normalize(value: number): number {
   if (!Number.isFinite(value)) return value
   const rounded = Number(value.toPrecision(PRECISION))
   return Object.is(rounded, -0) ? 0 : rounded
 }
 
-function toEntry(value) {
+function toEntry(value: number): string {
   return Object.is(value, -0) ? '0' : String(value)
 }
 
-function countDigits(entry) {
+function countDigits(entry: string): number {
   return entry.replace(/[-.]/g, '').length
 }
 
-function symbolFor(operator) {
-  return SYMBOLS[operator] ?? operator
+function symbolFor(operator: Operator): string {
+  return SYMBOLS[operator]
 }
 
-export function formatNumber(value) {
+export function formatNumber(value: number): string {
   if (!Number.isFinite(value)) return '错误'
   if (Object.is(value, -0) || value === 0) return '0'
 
@@ -58,7 +87,7 @@ export function formatNumber(value) {
   return numberFormatter.format(value)
 }
 
-export function formatEntry(entry) {
+export function formatEntry(entry: string): string {
   if (!entry) return '0'
   if (entry.includes('e') || entry.includes('E')) {
     return formatNumber(Number(entry))
@@ -73,12 +102,16 @@ export function formatEntry(entry) {
   return `${negative ? '-' : ''}${grouped}${dot}${fraction ?? ''}`
 }
 
-function formatOperand(value, index, useParentheses = true) {
+function formatOperand(
+  value: number,
+  index: number,
+  useParentheses = true,
+): string {
   const text = formatNumber(value)
   return useParentheses && value < 0 && index > 0 ? `(${text})` : text
 }
 
-function formatTokens(tokens) {
+function formatTokens(tokens: Token[]): string {
   return tokens
     .map((token, index) =>
       typeof token === 'number' ? formatOperand(token, index) : symbolFor(token),
@@ -86,7 +119,7 @@ function formatTokens(tokens) {
     .join(' ')
 }
 
-export function getDisplay(state) {
+export function getDisplay(state: CalculatorState): string {
   if (state.phase === 'error') return '错误'
   if (state.entry !== '') return formatEntry(state.entry)
   if (state.phase === 'evaluated' && state.result !== null) {
@@ -94,15 +127,16 @@ export function getDisplay(state) {
   }
 
   for (let index = state.tokens.length - 1; index >= 0; index -= 1) {
-    if (typeof state.tokens[index] === 'number') {
-      return formatNumber(state.tokens[index])
+    const token = state.tokens[index]
+    if (typeof token === 'number') {
+      return formatNumber(token)
     }
   }
 
   return '0'
 }
 
-export function getExpression(state) {
+export function getExpression(state: CalculatorState): string {
   if (state.phase === 'error') return state.error ?? ''
   if (state.phase === 'evaluated') return state.expression ?? ''
   if (state.tokens.length === 0) return ''
@@ -115,40 +149,50 @@ export function getExpression(state) {
 
   if (state.entry !== '') {
     const entry = formatEntry(state.entry)
-    parts.push(state.entry.startsWith('-') && parts.length > 0 ? `(${entry})` : entry)
+    parts.push(
+      state.entry.startsWith('-') && parts.length > 0 ? `(${entry})` : entry,
+    )
   }
 
   return parts.join(' ')
 }
 
-export function getPendingOperator(state) {
+export function getPendingOperator(state: CalculatorState): Operator | null {
   if (state.phase !== 'input') return null
   const last = state.tokens[state.tokens.length - 1]
   return isOperator(last) ? last : null
 }
 
-function precedence(operator) {
+function precedence(operator: Operator): number {
   return operator === '*' || operator === '/' ? 2 : 1
 }
 
-function applyTop(values, operators) {
+function applyTop(values: number[], operators: Operator[]): void {
   const operator = operators.pop()
   const right = values.pop()
   const left = values.pop()
 
-  if (left === undefined || right === undefined) {
+  if (operator === undefined || left === undefined || right === undefined) {
     throw new CalculatorError('无法计算')
   }
 
-  let value
-  if (operator === '+') value = left + right
-  else if (operator === '-') value = left - right
-  else if (operator === '*') value = left * right
-  else if (operator === '/') {
-    if (right === 0) throw new CalculatorError('不能除以零')
-    value = left / right
-  } else {
-    throw new CalculatorError('无法计算')
+  let value: number
+  switch (operator) {
+    case '+':
+      value = left + right
+      break
+    case '-':
+      value = left - right
+      break
+    case '*':
+      value = left * right
+      break
+    case '/':
+      if (right === 0) throw new CalculatorError('不能除以零')
+      value = left / right
+      break
+    default:
+      throw new CalculatorError('无法计算')
   }
 
   if (!Number.isFinite(value)) {
@@ -158,9 +202,9 @@ function applyTop(values, operators) {
   values.push(value)
 }
 
-function evaluateTokens(tokens) {
-  const values = []
-  const operators = []
+function evaluateTokens(tokens: Token[]): number {
+  const values: number[] = []
+  const operators: Operator[] = []
 
   for (const token of tokens) {
     if (typeof token === 'number') {
@@ -188,7 +232,7 @@ function evaluateTokens(tokens) {
   return values[0]
 }
 
-function inputDigit(state, value) {
+function inputDigit(state: CalculatorState, value: string): CalculatorState {
   if (!/^[0-9]$/.test(value)) return state
 
   if (
@@ -215,7 +259,7 @@ function inputDigit(state, value) {
   return { ...state, entry: `${state.entry}${value}` }
 }
 
-function inputDot(state) {
+function inputDot(state: CalculatorState): CalculatorState {
   if (
     state.phase === 'error' ||
     state.phase === 'evaluated' ||
@@ -233,7 +277,7 @@ function inputDot(state) {
   return { ...state, entry: `${state.entry}.` }
 }
 
-function toggleSign(state) {
+function toggleSign(state: CalculatorState): CalculatorState {
   if (state.phase === 'error') return state
 
   if (state.entry !== '') {
@@ -252,10 +296,10 @@ function toggleSign(state) {
   return state
 }
 
-function percent(state) {
+function percent(state: CalculatorState): CalculatorState {
   if (state.phase === 'error') return state
 
-  let value
+  let value: number
   if (state.entry !== '') {
     value = Number(state.entry)
   } else if (state.phase === 'evaluated' && state.result !== null) {
@@ -284,7 +328,7 @@ function percent(state) {
   }
 }
 
-function backspace(state) {
+function backspace(state: CalculatorState): CalculatorState {
   if (state.phase !== 'input') return state
 
   if (state.entry !== '') {
@@ -311,8 +355,11 @@ function backspace(state) {
   return state
 }
 
-function chooseOperator(state, operator) {
-  if (!isOperator(operator) || state.phase === 'error') return state
+function chooseOperator(
+  state: CalculatorState,
+  operator: Operator,
+): CalculatorState {
+  if (state.phase === 'error') return state
 
   if (state.entry !== '') {
     return {
@@ -342,10 +389,10 @@ function chooseOperator(state, operator) {
   return { ...state, tokens: [...tokens, operator] }
 }
 
-function equals(state) {
+function equals(state: CalculatorState): CalculatorState {
   if (state.phase === 'error') return state
 
-  const tokens = [...state.tokens]
+  const tokens: Token[] = [...state.tokens]
   if (state.entry !== '') {
     tokens.push(Number(state.entry))
   }
@@ -370,24 +417,25 @@ function equals(state) {
     return {
       ...createInitialState(),
       phase: 'error',
-      error:
-        error instanceof CalculatorError ? error.message : '无法计算',
+      error: error instanceof CalculatorError ? error.message : '无法计算',
     }
   }
 }
 
-function loadValue(state, value) {
-  const number = Number(value)
-  if (!Number.isFinite(number)) return state
+function loadValue(state: CalculatorState, value: number): CalculatorState {
+  if (!Number.isFinite(value)) return state
 
   return {
     ...createInitialState(),
     phase: 'evaluated',
-    result: normalize(number),
+    result: normalize(value),
   }
 }
 
-export function reduce(state, action) {
+export function reduce(
+  state: CalculatorState,
+  action: CalculatorAction,
+): CalculatorState {
   switch (action.type) {
     case 'digit':
       return inputDigit(state, String(action.value))

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
   createInitialState,
@@ -8,13 +8,40 @@ import {
   getPendingOperator,
   isOperator,
   reduce,
-} from './calculator.js'
+  type CalculatorAction,
+  type CalculatorState,
+  type Operator,
+} from './calculator.ts'
+
+interface HistoryEntry {
+  id: string
+  expression: string
+  value: number
+}
+
+interface StoredHistoryEntry {
+  id?: unknown
+  expression: string
+  value: number
+}
+
+type KeyVariant = 'secondary' | 'operator' | 'equals'
+
+interface KeyDefinition {
+  label: string
+  aria: string
+  action?: CalculatorAction
+  variant?: KeyVariant
+  operator?: Operator
+  wide?: boolean
+  equals?: boolean
+}
 
 const STORAGE_KEY = 'xxxand-calculator-history'
 const HISTORY_LIMIT = 30
 
-const calculator = ref(createInitialState())
-const history = ref(readHistory())
+const calculator = ref<CalculatorState>(createInitialState())
+const history = ref<HistoryEntry[]>(readHistory())
 
 const display = computed(() => getDisplay(calculator.value))
 const expression = computed(() => getExpression(calculator.value))
@@ -41,7 +68,7 @@ const announcement = computed(() => {
   return ''
 })
 
-const keys = [
+const keys: KeyDefinition[] = [
   { label: 'AC', aria: '全部清除', action: { type: 'clear' }, variant: 'secondary' },
   { label: '±', aria: '切换正负号', action: { type: 'toggle-sign' }, variant: 'secondary' },
   { label: '%', aria: '百分比', action: { type: 'percent' }, variant: 'secondary' },
@@ -63,27 +90,32 @@ const keys = [
   { label: '=', aria: '计算结果', variant: 'equals', equals: true },
 ]
 
-function createId() {
+function createId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
   }
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-function readHistory() {
+function isStoredHistoryEntry(value: unknown): value is StoredHistoryEntry {
+  if (typeof value !== 'object' || value === null) return false
+  const item = value as Record<string, unknown>
+  return (
+    typeof item.expression === 'string' &&
+    typeof item.value === 'number' &&
+    Number.isFinite(item.value)
+  )
+}
+
+function readHistory(): HistoryEntry[] {
   if (typeof localStorage === 'undefined') return []
 
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
+    const stored: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')
     if (!Array.isArray(stored)) return []
 
     return stored
-      .filter(
-        (item) =>
-          item &&
-          typeof item.expression === 'string' &&
-          Number.isFinite(item.value),
-      )
+      .filter(isStoredHistoryEntry)
       .slice(0, HISTORY_LIMIT)
       .map((item) => ({
         id: typeof item.id === 'string' ? item.id : createId(),
@@ -95,7 +127,7 @@ function readHistory() {
   }
 }
 
-function saveHistory() {
+function saveHistory(): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history.value))
   } catch {
@@ -103,25 +135,27 @@ function saveHistory() {
   }
 }
 
-function releasePointerFocus(event) {
-  if (event?.detail > 0) event.currentTarget.blur()
+function releasePointerFocus(event: MouseEvent): void {
+  if (event.detail > 0 && event.currentTarget instanceof HTMLElement) {
+    event.currentTarget.blur()
+  }
 }
 
-function pressKey(key, event) {
+function pressKey(key: KeyDefinition, event: MouseEvent): void {
   if (key.equals) {
     calculate()
-  } else {
+  } else if (key.action) {
     calculator.value = reduce(calculator.value, key.action)
   }
   releasePointerFocus(event)
 }
 
-function pressBackspace(event) {
+function pressBackspace(event: MouseEvent): void {
   calculator.value = reduce(calculator.value, { type: 'backspace' })
   releasePointerFocus(event)
 }
 
-function calculate() {
+function calculate(): void {
   const before = calculator.value
   const next = reduce(before, { type: 'equals' })
   calculator.value = next
@@ -131,6 +165,7 @@ function calculate() {
     before.phase === 'input' &&
     hasOperator &&
     next.phase === 'evaluated' &&
+    next.result !== null &&
     next.expression
   ) {
     history.value = [
@@ -145,12 +180,12 @@ function calculate() {
   }
 }
 
-function loadHistoryItem(item, event) {
+function loadHistoryItem(item: HistoryEntry, event: MouseEvent): void {
   calculator.value = reduce(calculator.value, { type: 'load', value: item.value })
   releasePointerFocus(event)
 }
 
-function clearHistory() {
+function clearHistory(): void {
   history.value = []
   try {
     localStorage.removeItem(STORAGE_KEY)
@@ -159,7 +194,7 @@ function clearHistory() {
   }
 }
 
-function handleKeydown(event) {
+function handleKeydown(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey) return
 
   const key = event.key
@@ -170,7 +205,7 @@ function handleKeydown(event) {
     return
   }
 
-  if (key === '+' || key === '-' || key === '*' || key === '/') {
+  if (isOperator(key)) {
     event.preventDefault()
     calculator.value = reduce(calculator.value, { type: 'operator', value: key })
     return
